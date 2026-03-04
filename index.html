@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Vatican AI Teachings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-navy: #1a2744;
+            --warm-coral: #e07a5f;
+            --soft-sage: #81b29a;
+            --cream: #f8f5f0;
+            --muted-gold: #c9a227;
+            --text-dark: #2c3e50;
+            --text-muted: #5a6c7d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #efe9e1 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: var(--deep-navy);
+            color: var(--cream);
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .chat-container {
+            flex: 1;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.assistant {
+            background: white;
+            border-radius: 16px;
+            padding: 16px 20px;
+            box-shadow: 0 2px 8px rgba(26, 39, 68, 0.08);
+            border-left: 4px solid var(--muted-gold);
+        }
+
+        .message.user {
+            background: var(--deep-navy);
+            color: var(--cream);
+            border-radius: 16px;
+            padding: 12px 18px;
+            margin-left: 40px;
+            text-align: right;
+        }
+
+        .message-content {
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .message-content p {
+            margin-bottom: 10px;
+        }
+
+        .message-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .message-content strong {
+            color: var(--deep-navy);
+        }
+
+        .message-content em {
+            color: var(--warm-coral);
+            font-style: normal;
+            font-weight: 600;
+        }
+
+        .suggested-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .suggested-btn {
+            background: rgba(26, 39, 68, 0.06);
+            border: 1px solid rgba(26, 39, 68, 0.12);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-dark);
+        }
+
+        .suggested-btn:hover {
+            background: var(--soft-sage);
+            border-color: var(--soft-sage);
+            color: white;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 -2px 10px rgba(26, 39, 68, 0.06);
+        }
+
+        .input-area input {
+            flex: 1;
+            border: none;
+            font-size: 1rem;
+            font-family: 'Source Sans Pro', sans-serif;
+            outline: none;
+            padding: 10px;
+        }
+
+        .input-area button {
+            background: var(--deep-navy);
+            color: var(--cream);
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .input-area button:hover {
+            background: var(--warm-coral);
+        }
+
+        .input-area button:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: flex;
+            gap: 4px;
+            padding: 10px 0;
+        }
+
+        .loading span {
+            width: 8px;
+            height: 8px;
+            background: var(--muted-gold);
+            border-radius: 50%;
+            animation: bounce 1.4s ease-in-out infinite;
+        }
+
+        .loading span:nth-child(2) { animation-delay: 0.2s; }
+        .loading span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); }
+        }
+
+        .source-link {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .source-link a {
+            color: var(--muted-gold);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📜 Explore Vatican AI Teachings</h1>
+        <p>A guided exploration of "Antiqua et Nova" — the Vatican's note on AI and human intelligence</p>
+    </div>
+
+    <div class="chat-container">
+        <div class="messages" id="messages">
+            <!-- Messages will be inserted here -->
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Ask a question or type your thoughts..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()" id="sendBtn">Send</button>
+        </div>
+
+        <div class="source-link">
+            <a href="https://www.vatican.va/roman_curia/congregations/cfaith/documents/rc_ddf_doc_20250128_antiqua-et-nova_en.html" target="_blank">Read the full document →</a>
+        </div>
+    </div>
+
+    <script>
+        const SYSTEM_PROMPT = `You are a friendly, thoughtful tutor helping Catholic high school educators explore "Antiqua et Nova," the Vatican's January 2025 document on AI and human intelligence.
+
+Your role is to:
+1. Guide them through key passages and themes in a conversational way
+2. Connect the teachings to their real concerns as educators (cheating, critical thinking, student dependency)
+3. Ask reflective questions to help them think deeply
+4. Keep responses concise (2-3 paragraphs max) and accessible
+
+KEY THEMES TO DRAW FROM:
+- AI is a PRODUCT of human intelligence, not a form of it (par. 35)
+- Human intelligence involves the whole person: body, relationships, emotions, morality, spirituality (par. 26-29)
+- AI can perform tasks but cannot think, love, or make moral judgments (par. 30-34)
+- In education, AI should support, not replace, the teacher-student relationship (par. 77-84)
+- The goal is "wisdom of the heart" — not just data, but discernment (par. 113-116)
+- Technology should serve human dignity and the common good (par. 42-48)
+
+TEACHING APPROACH:
+- Start by asking what aspect they'd like to explore, or offer a few starting points
+- Share a brief insight from the document, then ask a reflective question
+- Use quotes sparingly — paraphrase and explain in plain language
+- Connect abstract concepts to concrete classroom situations
+- Be warm and encouraging, not preachy
+
+Remember: These educators are worried about AI — validate that, then help them see the Church's balanced perspective that acknowledges both promise and peril.`;
+
+        let conversationHistory = [];
+        let isLoading = false;
+
+        // Initial message
+        window.onload = function() {
+            addMessage('assistant', `Welcome! I'm here to help you explore the Vatican's recent teachings on AI — specifically the document "Antiqua et Nova" (January 2025), which offers a thoughtful Catholic perspective on artificial intelligence and what it means to be human.
+
+This isn't just about technology — it speaks directly to questions you're likely grappling with as educators: What makes human intelligence different from AI? How should we think about AI in the classroom? What does wisdom look like in a digital age?
+
+<strong>Where would you like to start?</strong>`, [
+                "What does the Vatican say AI actually is?",
+                "How should I think about AI in my classroom?",
+                "What makes human intelligence unique?",
+                "I'm worried about students losing critical thinking"
+            ]);
+        };
+
+        function addMessage(role, content, suggestions = []) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            
+            let html = `<div class="message-content">${formatContent(content)}</div>`;
+            
+            if (suggestions.length > 0) {
+                html += `<div class="suggested-questions">`;
+                suggestions.forEach(q => {
+                    html += `<button class="suggested-btn" onclick="askQuestion('${q.replace(/'/g, "\\'")}')">${q}</button>`;
+                });
+                html += `</div>`;
+            }
+            
+            messageDiv.innerHTML = html;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function formatContent(content) {
+            // Convert markdown-style formatting to HTML
+            return content
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/^(.+)$/gm, '<p>$1</p>')
+                .replace(/<p><\/p>/g, '');
+        }
+
+        function addLoadingIndicator() {
+            const messagesDiv = document.getElementById('messages');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message assistant';
+            loadingDiv.id = 'loading';
+            loadingDiv.innerHTML = `<div class="loading"><span></span><span></span><span></span></div>`;
+            messagesDiv.appendChild(loadingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function removeLoadingIndicator() {
+            const loading = document.getElementById('loading');
+            if (loading) loading.remove();
+        }
+
+        function askQuestion(question) {
+            document.getElementById('userInput').value = question;
+            sendMessage();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const message = input.value.trim();
+            
+            if (!message || isLoading) return;
+
+            isLoading = true;
+            sendBtn.disabled = true;
+            input.value = '';
+
+            addMessage('user', message);
+            addLoadingIndicator();
+
+            conversationHistory.push({ role: 'user', content: message });
+
+            try {
+                const response = await fetch('/.netlify/functions/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        messages: conversationHistory
+                    })
+                });
+
+                const data = await response.json();
+                removeLoadingIndicator();
+
+                if (data.content && data.content[0]) {
+                    const assistantMessage = data.content[0].text;
+                    conversationHistory.push({ role: 'assistant', content: assistantMessage });
+                    
+                    // Generate contextual follow-up suggestions
+                    const suggestions = generateSuggestions(assistantMessage);
+                    addMessage('assistant', assistantMessage, suggestions);
+                } else {
+                    addMessage('assistant', "I'm sorry, I had trouble responding. Please try again.");
+                }
+            } catch (error) {
+                removeLoadingIndicator();
+                console.error('Error:', error);
+                addMessage('assistant', "I'm sorry, there was an error connecting. Please check your connection and try again.");
+            }
+
+            isLoading = false;
+            sendBtn.disabled = false;
+        }
+
+        function generateSuggestions(response) {
+            // Contextual suggestions based on response content
+            const suggestions = [];
+            
+            if (response.toLowerCase().includes('teacher') || response.toLowerCase().includes('classroom')) {
+                suggestions.push("How do I talk to students about this?");
+            }
+            if (response.toLowerCase().includes('dignity') || response.toLowerCase().includes('human')) {
+                suggestions.push("What makes humans different from AI?");
+            }
+            if (response.toLowerCase().includes('wisdom') || response.toLowerCase().includes('heart')) {
+                suggestions.push("Tell me more about 'wisdom of the heart'");
+            }
+            if (response.toLowerCase().includes('concern') || response.toLowerCase().includes('risk')) {
+                suggestions.push("What are the positive possibilities?");
+            }
+            
+            // Always offer a way to go deeper or shift topics
+            if (suggestions.length < 2) {
+                suggestions.push("What else should I know?");
+            }
+            
+            return suggestions.slice(0, 3);
+        }
+    </script>
+</body>
+</html>
