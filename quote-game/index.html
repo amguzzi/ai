@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redacted — Visual Direction Explorations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#151310; --card:#1e1b16; --line:#33302a; --fg:#f2ece0; --dim:#a59d8c; --accent:#f2b705;
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--fg);line-height:1.55;min-height:100vh;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:1000px;margin:0 auto;padding:4rem 1.5rem 5rem;}
+header{max-width:60ch;margin-bottom:3rem;}
+.kick{font-size:.78rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(2.4rem,6vw,3.8rem);line-height:1;margin:.6rem 0;letter-spacing:-.01em;}
+h1 .bar{background:var(--fg);color:transparent;border-radius:5px;padding:0 .1em;}
+header p{color:var(--dim);font-size:1.1rem;max-width:52ch;margin-top:.5rem;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.25rem;}
+a.card{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);
+  border-radius:14px;overflow:hidden;transition:transform .15s,border-color .15s,box-shadow .15s;}
+a.card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 18px 40px -24px rgba(0,0,0,.8);}
+.swatch{height:130px;display:grid;place-items:center;position:relative;overflow:hidden;}
+.swatch .bar{height:16px;border-radius:2px;}
+.body{padding:1.1rem 1.25rem 1.35rem;}
+.num{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);}
+.name{font-family:var(--serif);font-weight:600;font-size:1.3rem;margin:.2rem 0 .35rem;}
+.desc{color:var(--dim);font-size:.9rem;}
+.tag{display:inline-block;margin-top:.6rem;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);}
+
+/* Swatch flavours */
+.sw1{background:linear-gradient(180deg,#f4ead2,#e9dab9);}
+.sw1 .bar{width:60%;background:#14110c;transform:rotate(-1.5deg);box-shadow:1px 1px 0 rgba(0,0,0,.3);}
+.sw2{background:#fff;}
+.sw2 .bar{width:60%;background:#111;box-shadow:0 0 0 3px #f2b705;}
+.sw3{background:#0a0e0c;}
+.sw3 .bar{width:60%;background:repeating-linear-gradient(90deg,#0b3327 0 6px,#072019 6px 12px);border:1px solid var(--accent);box-shadow:0 0 12px rgba(53,255,160,.4);}
+.sw4{background:radial-gradient(120% 100% at 50% 0,#efece4,#ddd8cc);}
+.sw4 .bar{width:60%;background:linear-gradient(180deg,#2b271e,#201d16);box-shadow:0 0 0 2px #9a8248;}
+footer{margin-top:3rem;color:var(--dim);font-size:.85rem;border-top:1px solid var(--line);padding-top:1.5rem;max-width:70ch;}
+footer a{color:var(--accent);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="kick">Look-and-feel exploration · play-once web game</p>
+    <h1>RE<span class="bar">DACT</span>ED</h1>
+    <p>Four distinct visual directions for a quote-guessing game. Same four screens, same
+      six named components — different worlds. Click any card to walk its screens.</p>
+  </header>
+
+  <div class="grid">
+    <a class="card" href="direction-1-dossier.html">
+      <div class="swatch sw1"><span class="bar"></span></div>
+      <div class="body">
+        <p class="num">Direction 01</p>
+        <p class="name">Banned Book / Dossier</p>
+        <p class="desc">Warm paper, serif type, heavy inked censorship bars. A declassified file torn from an old book.</p>
+        <span class="tag">Front-runner ★</span>
+      </div>
+    </a>
+    <a class="card" href="direction-2-editorial.html">
+      <div class="swatch sw2"><span class="bar"></span></div>
+      <div class="body">
+        <p class="num">Direction 02</p>
+        <p class="name">Editorial / Daily Puzzle</p>
+        <p class="desc">Crisp white, a confident serif masthead, one marigold accent. The games-section feel.</p>
+        <span class="tag">Most shareable</span>
+      </div>
+    </a>
+    <a class="card" href="direction-3-terminal.html">
+      <div class="swatch sw3"><span class="bar"></span></div>
+      <div class="body">
+        <p class="num">Direction 03</p>
+        <p class="name">Terminal / Human-or-Machine</p>
+        <p class="desc">Phosphor green on black, monospace, block-glyph censors. Reframes it as classifying the source.</p>
+        <span class="tag">Boldest concept</span>
+      </div>
+    </a>
+    <a class="card" href="direction-4-museum.html">
+      <div class="swatch sw4"><span class="bar"></span></div>
+      <div class="body">
+        <p class="num">Direction 04</p>
+        <p class="name">Museum Placard / Archival</p>
+        <p class="desc">Gallery wall, engraved object labels, brass accents. The bar is a conservator's cover plate.</p>
+        <span class="tag">Most premium</span>
+      </div>
+    </a>
+  </div>
+
+  <footer>
+    All screens use placeholder quote text. Each direction meets WCAG AA contrast and never signals
+    correct/incorrect by color alone (a ✓/✗ mark and a text label always accompany it).
+    See <a href="README.md">README.md</a> for what each direction optimizes for and where it might struggle.
+  </footer>
+</div>
+</body>
+</html>
