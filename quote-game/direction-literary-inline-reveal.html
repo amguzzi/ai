@@ -95,14 +95,14 @@ body{font-family:var(--serif); color:var(--ink);
 .guess-input label{display:block; font-size:var(--t-xs); letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:var(--s2); text-align:center;}
 .guess-input .row{display:flex; gap:var(--s3); align-items:flex-end;}
 /* the box: border lives on the field; the mark is a flex item centered with the text */
-.guess-input .field{flex:1; min-width:0; display:flex; align-items:center; gap:.5rem; border-bottom:1.5px solid var(--ink);}
+.guess-input .field{position:relative; flex:1; min-width:0; border-bottom:1.5px solid var(--ink);}
 .guess-input .field:focus-within{border-bottom-width:2px;}
-.guess-input input{flex:1; min-width:0; font-family:var(--serif); font-size:var(--t-lg); font-style:italic; color:var(--ink);
-  background:transparent; border:none; padding:.2em .1em .3em; outline:none;}
+.guess-input input{width:100%; font-family:var(--serif); font-size:var(--t-lg); font-style:italic; color:var(--ink);
+  background:transparent; border:none; padding:.15em 2.7rem .3em .1em; outline:none;}
 .guess-input input::placeholder{color:var(--muted); opacity:.6;}
-/* verdict mark: space reserved (visibility) so nothing shifts; vertically centered on the guess line */
-.guess-input .mark{flex:none; width:1.9rem; height:1.9rem; border-radius:100px; display:grid; place-items:center;
-  border:2px solid; font-size:1.1rem; line-height:1; font-style:normal; visibility:hidden;}
+/* verdict mark: absolute, so it never stretches the box; centered on the guess line; its space is held by the input's right padding */
+.guess-input .mark{position:absolute; right:.1rem; top:50%; transform:translateY(-50%); width:1.9rem; height:1.9rem;
+  border-radius:100px; display:grid; place-items:center; border:2px solid; font-size:1.1rem; line-height:1; font-style:normal; visibility:hidden;}
 .guess-input .mark.miss{color:var(--miss); border-color:var(--miss);}
 .guess-input .mark.ok{color:var(--correct); border-color:var(--correct);}
 .play.revealed .guess-input{pointer-events:none;}
@@ -127,7 +127,6 @@ body{font-family:var(--serif); color:var(--ink);
    ============================================================ */
 .reveal-panel{max-height:0; opacity:0; overflow:hidden; transition:max-height .5s ease, opacity .5s ease, margin .5s ease; margin-top:0;}
 .play.revealed .reveal-panel{max-height:640px; opacity:1; margin-top:var(--s3); transition-delay:.8s;}
-.reveal-panel .rule{height:1px; background:var(--rule); margin-bottom:var(--s2);}
 .answer{font-size:var(--t-lg); margin:0 0 var(--s2);}
 .answer .truth{font-weight:500; border-bottom:2px solid var(--correct); padding-bottom:1px;}
 .answer .src{font-style:italic; color:var(--muted);} .answer .src b{font-style:normal; font-weight:600; font-variant-numeric:oldstyle-nums; color:var(--ink);}
@@ -208,7 +207,7 @@ body{font-family:var(--serif); color:var(--ink);
     <div class="leaf title-page">
       <h1>RE<span class="bar" aria-hidden="true">DACT</span>ED</h1>
       <p class="ornament" aria-hidden="true">❦</p>
-      <p class="sub">Innovation has always been disruptive. Read a real reaction, and guess the innovation that sparked it.</p>
+      <p class="sub">Innovation has always been disruptive, whether it's the wheel or artificial intelligence. Read a real reaction, and guess the innovation that sparked it.</p>
       <div class="actions" style="justify-content:center;">
         <button class="btn" onclick="go('s2')">Begin</button>
       </div>
@@ -243,7 +242,6 @@ body{font-family:var(--serif); color:var(--ink);
 
       <!-- reveal expands here, in place; the quote above stays put -->
       <div class="reveal-panel" aria-live="polite">
-        <div class="rule"></div>
         <p class="answer" id="answer">It was <span class="truth">the printed almanac</span> — <span class="src">A. Verger, <b>1698</b></span>.</p>
         <p class="footnote"><span class="dag">†</span>Three hundred years before we feared machines would think for us,
           a clergyman was certain that cheap print would rot the memory of the young.</p>
