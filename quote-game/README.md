@@ -6,107 +6,121 @@ bars, guess what it is, then see *guessed vs. truth* and a shareable score. The
 arc is curiosity → the thrill of being fooled → *"wait, was that AI or a
 300-year-old book?"*
 
-These are **static, clickable mockups** — look-and-feel only, no real game
-logic. Open `index.html` for the gallery, or open any direction file directly.
-Each file walks the same four screens via the switcher pinned at the bottom.
+Static, clickable mockups — look-and-feel only, no real game logic. Open
+`index.html` for the gallery, or open any file directly and use the switcher
+pinned at the bottom to walk the screens.
+
+## Round 2 — what changed after review
+
+- **Dropped** the terminal / "human or machine" direction.
+- **Kept** Editorial (crisp daily-puzzle) as-is.
+- **Reworked** the Dossier direction — the kitsch (rubber stamps, torn edges,
+  paper grain, typewriter face) is gone. It's now a cool, Swiss-clean
+  "declassified report" with the black bar as a disciplined hero.
+- **Reimagined** the Museum direction as a **nicely bound book** — one clean
+  reading typeface (Newsreader), running heads, folios, a drop cap, hairline
+  rules. No brass, no placards.
+- **No "how wrong" magnitude** anywhere. Reveals now say only *Correct* or
+  *Not quite* (with a ✓/✗ and a word) — never "off by 3 centuries."
+- **Two reveal flows** mocked up in the Literary direction (see below).
 
 ## Files
 
-| File | Direction |
-|------|-----------|
+| File | Direction / flow |
+|------|------------------|
 | `index.html` | Gallery / launcher |
-| `direction-1-dossier.html` | **Banned Book / Redaction Dossier** (anchor) |
-| `direction-2-editorial.html` | Crisp Editorial / Daily Puzzle |
-| `direction-3-terminal.html` | Terminal / "Human or Machine" |
-| `direction-4-museum.html` | Museum Placard / Archival |
+| `direction-editorial.html` | **Editorial** — daily puzzle |
+| `direction-dossier-refined.html` | **Dossier, refined** — declassified report |
+| `direction-museum-onebyone.html` | **Literary** — reveal one-by-one (Flow A) |
+| `direction-museum-allatend.html` | **Literary** — reveal all at the end (Flow B) |
 
-## Screens (identical set in every direction)
+## Screens & named components
 
-1. **Intro / cover**
-2. **QuoteCard** — redacted passage + **GuessInput** (free text)
-3. **RevealCard** — *You guessed ___ / It was ___, [year], [author]* + one-line context blurb
-4. **Final result** — **ScoreSummary** + **ShareCard** (score + funniest miss as the hook)
+Same four screens everywhere — cover → **QuoteCard** + **GuessInput** →
+**RevealCard** → **ScoreSummary** + **ShareCard** — built from the same six
+named components (`QuoteCard`, `RedactionBar`, `GuessInput`, `RevealCard`,
+`ScoreSummary`, `ShareCard`) so a chosen direction ports over cleanly. The
+**RedactionBar** is the signature element and is deliberate in each:
 
-## Named components (map cleanly onto a chosen direction)
-
-Every direction expresses the *same* components through its own design tokens
-(color, type scale, spacing, redaction-bar treatment), using the same class
-names so a chosen direction ports straight over:
-
-`QuoteCard` · `RedactionBar` · `GuessInput` · `RevealCard` · `ScoreSummary` · `ShareCard`
-
-The **RedactionBar** is the signature element and is designed deliberately in
-each world — never a plain black rectangle by default:
-
-- **D1 Dossier** — heavy inked marker bar, slightly rotated, uneven ink bleed; the "subject" bar gets a dashed evidence outline.
-- **D2 Editorial** — clean rounded spoiler tile with a diagonal sheen; the subject bar is ringed in the marigold accent.
-- **D3 Terminal** — block-glyph censor (`████`) with phosphor glow; the subject bar shows a glowing `[?]`.
-- **D4 Museum** — a matte conservator's *cover plate* with engraved corner ticks; the subject bar is framed in brass.
+- **Editorial** — clean rounded spoiler tile with a diagonal sheen; subject bar ringed in marigold.
+- **Dossier, refined** — dead-flat sharp black bar with corner registration ticks; subject bar keyed in signal-red.
+- **Literary** — a printed censor block with a faint letterpress impression; subject bar underscored by a hairline.
 
 ## Accessibility
 
-- **Contrast:** body/label text meets **WCAG AA** (most primary text hits AAA). Palettes were chosen against their own backgrounds — e.g. the terminal's dim green is ~5.2:1 on near-black, the museum brass ~5.0:1 on card stock.
-- **Never color alone:** correct/incorrect always carries a **✓ / ✗ glyph *and* a text label** ("Correct" / "Not quite / Misattributed / INCORRECT"), and the strike-through vs. underline treatment differs by shape, not just hue. Share grids label their results for screen readers (`aria-label="Results: 5 correct of 8"`).
-- Redaction bars carry `role="img"` + an `aria-label` ("redacted" / "withheld") so the blackout is announced, not silently skipped.
-- `prefers-reduced-motion` disables the screen-transition and cursor-blink animations.
+- Body/label text meets **WCAG AA** (most primary text AAA), verified against each direction's own background.
+- **Never color alone:** correct/incorrect always carries a **✓ / ✗ glyph + a word** ("Correct" / "Not quite" / "Incorrect"), and struck-through vs. underlined answers differ by shape, not just hue. Share grids and the answer key are labelled for screen readers.
+- Redaction bars carry `role="img"` + an `aria-label` so the blackout is announced.
+- `prefers-reduced-motion` disables transitions.
+- All quotes are **placeholder text**.
 
-All quotes are **placeholder text** — no real quotations are used.
+---
+
+## The reveal-flow decision (shown in the Literary direction)
+
+Both flows use the identical direction — only pacing differs.
+
+### Flow A — reveal one-by-one (`…onebyone.html`)
+Guess a passage → turn the leaf → see the truth → next.
+- **Optimizes for:** the dopamine loop. Immediate feedback delivers the
+  "fooled you" thrill eight times, and each reveal can teach before the next
+  guess. Lowest cognitive load; easiest to pick up and put down.
+- **Struggles with:** it spends the surprise in small change. There's no single
+  climactic reveal, and a bad start can feel discouraging mid-run.
+
+### Flow B — reveal all at the end (`…allatend.html`)
+Guess all eight (answers sealed) → an **Answer Key** unseals everything at once → result.
+- **Optimizes for:** suspense and the shareable payoff. Preserves the
+  "was that AI or 300 years old?" tension across the *whole* set, then pays it
+  off in one binge — which reads beautifully as a book's back-of-the-book
+  solutions and makes the strongest single reveal moment to screenshot.
+- **Struggles with:** delayed gratification. No feedback while you play (a
+  weaker teaching loop), the Answer Key is a longer scroll, and impatient
+  players may bounce before the reveal.
+
+**Recommendation:** **Flow B (all at the end)** fits this game's emotional arc
+and its literary, book-like framing best — the sealed-then-revealed structure
+*is* the "wait, what?" moment, and it's the more shareable climax. Keep Flow A
+in your pocket as the friendlier on-ramp if early testing shows drop-off.
 
 ---
 
 ## What each direction optimizes for — and where it struggles
 
-### Direction 1 — Banned Book / Redaction Dossier  ★ front-runner
-**Optimizes for:** the core emotional hook. The redaction bar isn't decoration
-here — it *is* the concept, and warm paper + serif + typewriter chrome + oxblood
-stamps sell "this is a real document someone tried to hide" better than anything
-else. The declassified-file framing makes the reveal feel like *unsealing
-evidence*, which is exactly the small-thrill beat. Highest personality, most
-memorable, most on-brief.
-**Struggles with:** texture is easy to overdo — grain, stamps, and torn edges
-must stay restrained or it tips into kitsch. Warm paper + heavy serifs cost a
-little raw legibility versus stark white, and it's the most opinionated look, so
-it wins big or divides the room. Localization/long words can crowd the ornate
-layout.
+### Editorial — Daily Puzzle
+**Optimizes for:** shareability and trust. Reads instantly as a reputable daily
+puzzle (masthead, byline, "No. 208"), the strongest cue that a stranger's shared
+score is worth a tap. Cleanest ShareCard, best on small screens, cheapest to
+build and extend.
+**Struggles with:** familiarity is also its ceiling — it can feel derivative and
+carries the least of the game's witty, literary soul. Risks reading "clinical."
 
-### Direction 2 — Crisp Editorial / Daily Puzzle
-**Optimizes for:** **shareability and trust.** Reads instantly as a
-reputable daily puzzle (byline, masthead, "No. 208"), which is the strongest cue
-that a stranger's shared score is worth a tap. Cleanest ShareCard, best on small
-screens, cheapest to build and extend, most familiar interaction model.
-**Struggles with:** familiarity is also its ceiling — it can feel derivative of
-existing games and carries the least of the game's *witty, literary* soul. The
-redaction bar has to work harder to feel intentional rather than a generic
-spoiler tile. Risks reading "clinical," the exact word the brief warns against.
+### Dossier, refined — Declassified Report
+**Optimizes for:** keeping the redaction concept front-and-centre without the
+kitsch. Cool stock + Swiss type + a single signal-red make the black bar feel
+*designed and deliberate*, and the "unsealed record" framing gives the reveal a
+satisfying click. Most concept-forward; the bar has never looked more intentional.
+**Struggles with:** seriousness can tip into cold. It's the least playful of the
+three and leans on copy to carry warmth; the report structure needs discipline
+to avoid feeling like a form.
 
-### Direction 3 — Terminal / "Human or Machine"
-**Optimizes for:** the **"was that AI or a 300-year-old book?"** beat, made
-literal. The human-vs-machine classification framing turns the twist into the
-whole premise, and the aesthetic is the most distinctive/ownable of the four —
-great for a launch that wants to be talked about.
-**Struggles with:** genre baggage. Monospace + scanlines skews techy and can
-undercut the *literary* tone; it's the least "warm" and may narrow the audience.
-Long serif quotes lose some grace in mono. Green-on-black needs careful contrast
-discipline (done here), and the retro-terminal trope is common enough that
-execution has to be sharp to avoid cliché.
-
-### Direction 4 — Museum Placard / Archival
-**Optimizes for:** a **premium, authoritative, "timeless"** feel. The object-label
-framing ("attribute the fear," accession numbers, curator's notes) is a genuinely
-fresh metaphor for guessing, and the conservator's-cover-plate redaction is the
-most tactile bar of the set. Ages well; feels like a keepsake more than a meme.
-**Struggles with:** it's the quietest and least *playful* — the wit has to live
-entirely in the copy, since the chrome is reserved. Lowest urgency/shareability
-(museums don't shout), and the ornamentation (double keylines, brass, engraving)
-is the fussiest to keep crisp responsively. Slowest read of the four.
+### Literary — A Nicely Bound Book  ★
+**Optimizes for:** a premium, timeless, keepsake feel and the most *literary*
+voice — exactly the tone the brief asks for. One clean reading face, generous
+margins, running heads and folios make it feel like a beautifully typeset book;
+the Answer-Key flow extends that metaphor perfectly. Ages well; feels like an
+object, not a meme.
+**Struggles with:** it's the quietest — wit must live in the copy, since the
+chrome is restrained. Lower built-in urgency than Editorial, and fine
+typography demands care to stay crisp responsively.
 
 ---
 
 ## Recommendation
 
-Ship **Direction 1 (Dossier)** as the identity — it's the most on-brief and
-owns the redaction concept outright — but **borrow Direction 2's ShareCard and
-masthead discipline** for the shareable/result surfaces, where clarity and
-instant-recognizability drive the loop. Direction 3 is the strongest *campaign*
-idea if the team wants the AI-vs-history angle to be the headline; Direction 4 is
-the fallback if the brand should feel premium and evergreen rather than punchy.
+Lead with **Literary** as the identity — it best matches the witty, literary,
+shareable brief and reads as a keepsake — paired with **Flow B (reveal at the
+end)** for the climactic, screenshot-ready payoff. Borrow **Editorial's
+ShareCard clarity** for the result surface if the share loop needs more
+punch. **Dossier, refined** is the strong alternative if the brand should feel
+sharper and more concept-driven than warm.

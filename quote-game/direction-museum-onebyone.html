@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redacted — Literary (Bound Book) · Reveal One-by-One</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DIRECTION — LITERARY / NICELY BOUND BOOK
+   Flow: reveal comes immediately after each guess (one-by-one)
+   One clean reading typeface (Newsreader), fine-press restraint:
+   running heads, folios, a drop cap, hairline rules. No brass,
+   no placards, no ornament for its own sake.
+   ============================================================ */
+:root{
+  /* ---- Color (quiet, bookish) ---- */
+  --paper:    #f4eee1;   /* warm book cream */
+  --page:     #faf6ec;   /* the leaf itself */
+  --edge:     #e7dfcc;
+  --ink:      #24211a;   /* text — 12.4:1 AAA */
+  --ink-soft: #5d564733; /* placeholder use */
+  --muted:    #6a6353;   /* secondary — 5.6:1 AA */
+  --rule:     #d8cfb8;   /* hairline */
+  --redact:   #1c1912;   /* printed censor block */
+  --correct:  #3a5741;   /* muted forest — 5.2:1 */
+  --miss:     #8a3a2c;   /* muted oxblood — 5.4:1 */
+
+  /* ---- Type (one family) ---- */
+  --serif:'Newsreader', Georgia, 'Times New Roman', serif;
+  --t-xs:.74rem; --t-sm:.9rem; --t-md:1.1rem;
+  --t-lg:1.45rem; --t-xl:1.9rem; --t-2xl:2.7rem; --t-3xl:3.7rem;
+
+  /* ---- Space ---- */
+  --s1:.5rem; --s2:1rem; --s3:1.5rem; --s4:2rem; --s5:3rem; --s6:4.5rem;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--serif); color:var(--ink);
+  background:radial-gradient(120% 90% at 50% -5%, #f7f1e5, var(--paper) 60%, var(--edge));
+  line-height:1.62; min-height:100vh; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+.stage{max-width:640px; margin:0 auto; padding:var(--s5) var(--s3) 7rem;}
+.screen{display:none; animation:leaf .45s ease both;}
+.screen.active{display:block;}
+@keyframes leaf{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+@media (prefers-reduced-motion:reduce){.screen{animation:none;}}
+
+/* The leaf / page */
+.leaf{
+  position:relative; background:var(--page); border:1px solid var(--edge);
+  padding:var(--s5) clamp(1.5rem,6vw,3.5rem) var(--s5);
+  box-shadow:0 1px 0 #fff inset, 0 24px 50px -34px rgba(40,32,16,.55), 0 2px 5px rgba(40,32,16,.07);
+}
+/* faint gutter shadow, like a bound leaf */
+.leaf::before{content:""; position:absolute; top:0; bottom:0; left:0; width:14px;
+  background:linear-gradient(90deg, rgba(40,32,16,.09), transparent); pointer-events:none;}
+
+/* Running head + folio */
+.running-head{
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-size:var(--t-xs); letter-spacing:.24em; text-transform:uppercase; color:var(--muted);
+  border-bottom:1px solid var(--rule); padding-bottom:.7rem; margin-bottom:var(--s4);
+}
+.running-head .r{letter-spacing:.24em;}
+.folio{ text-align:center; font-size:var(--t-sm); color:var(--muted); letter-spacing:.1em;
+  margin-top:var(--s5); font-variant-numeric:oldstyle-nums; font-style:italic;}
+.folio::before,.folio::after{content:"·"; margin:0 .8em; color:var(--rule);}
+.ornament{text-align:center; color:var(--muted); font-size:var(--t-lg); margin:var(--s3) 0; letter-spacing:.4em;}
+
+/* ============================================================
+   COMPONENT: RedactionBar — printed censor block
+   A clean over-inked bar as it would sit in a printed book:
+   solid ink with a faint letterpress impression. No gimmick.
+   ============================================================ */
+.redaction-bar{
+  --w:8ch; display:inline-block; position:relative;
+  width:var(--w); height:1.02em; vertical-align:-.14em;
+  background:var(--redact); border-radius:1.5px;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.06), inset 0 -1px 2px rgba(0,0,0,.45), 0 .5px 0 rgba(0,0,0,.2);
+}
+.redaction-bar[data-w="s"]{--w:5ch;}
+.redaction-bar[data-w="m"]{--w:9ch;}
+.redaction-bar[data-w="l"]{--w:13ch;}
+.redaction-bar.subject{--w:11ch; height:1.08em;}
+.redaction-bar.subject::after{ /* a hair of emphasis: thin keyline beneath */
+  content:""; position:absolute; left:0; right:0; bottom:-4px; height:1.5px; background:var(--ink); opacity:.35;}
+
+/* ============================================================
+   COMPONENT: QuoteCard
+   ============================================================ */
+.quote-card blockquote{font-weight:400; font-size:var(--t-xl); line-height:1.5; margin:var(--s2) 0 var(--s4);
+  font-optical-sizing:auto;}
+.quote-card blockquote::first-letter{
+  font-size:3.2em; font-weight:500; float:left; line-height:.76; padding:.05em .12em 0 0; color:var(--ink);
+}
+.attrib-veiled{font-style:italic; color:var(--muted); font-size:var(--t-md); text-align:right;}
+
+/* ============================================================
+   COMPONENT: GuessInput — a ruled line to write on
+   ============================================================ */
+.guess-input{margin-top:var(--s4);}
+.guess-input label{display:block; font-size:var(--t-xs); letter-spacing:.2em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:var(--s2);}
+.guess-input .row{display:flex; gap:var(--s3); align-items:flex-end;}
+.guess-input input{
+  flex:1; font-family:var(--serif); font-size:var(--t-lg); font-style:italic; color:var(--ink);
+  background:transparent; border:none; border-bottom:1.5px solid var(--ink); padding:.2em .1em .35em; outline:none;
+}
+.guess-input input::placeholder{color:var(--muted); opacity:.6;}
+.guess-input input:focus{border-bottom-width:2px;}
+
+/* Buttons — quiet, typographic */
+.btn{font-family:var(--serif); font-size:var(--t-md); cursor:pointer; background:var(--ink); color:var(--page);
+  border:1px solid var(--ink); border-radius:2px; padding:.6em 1.4em; transition:opacity .15s, transform .12s;}
+.btn:hover{transform:translateY(-1px); opacity:.9;}
+.btn.quiet{background:transparent; color:var(--ink); border-color:var(--rule);}
+.btn.quiet:hover{border-color:var(--ink);}
+.btn .arw{font-style:normal;}
+.actions{display:flex; gap:var(--s3); flex-wrap:wrap; align-items:center; margin-top:var(--s4);}
+
+/* ============================================================
+   COMPONENT: RevealCard — set like a resolved footnote
+   ============================================================ */
+.verdict{display:inline-flex; align-items:center; gap:.55em; font-size:var(--t-xs); letter-spacing:.2em;
+  text-transform:uppercase; color:var(--muted);}
+.verdict .seal{width:1.5rem; height:1.5rem; border-radius:100px; display:grid; place-items:center;
+  border:1.5px solid; font-size:.85rem; font-style:normal;}
+.verdict.ok{color:var(--correct);} .verdict.ok .seal{border-color:var(--correct); color:var(--correct);}
+.verdict.miss{color:var(--miss);} .verdict.miss .seal{border-color:var(--miss); color:var(--miss);}
+.reveal-lines{margin:var(--s4) 0;}
+.reveal-lines p{font-size:var(--t-lg); margin:var(--s2) 0; display:flex; gap:var(--s2); align-items:baseline;}
+.reveal-lines .k{flex:none; width:6.5rem; font-size:var(--t-xs); letter-spacing:.18em; text-transform:uppercase;
+  color:var(--muted); transform:translateY(-.1em);}
+.reveal-lines .yours{font-style:italic; color:var(--muted); text-decoration:line-through; text-decoration-thickness:1.5px;}
+.reveal-lines .truth{font-weight:500; border-bottom:2px solid var(--correct); padding-bottom:1px;}
+.reveal-lines .src{font-style:italic; color:var(--ink);}
+.footnote{border-top:1px solid var(--rule); padding-top:var(--s2); margin-top:var(--s3);
+  font-size:var(--t-md); color:var(--muted); font-style:italic;}
+.footnote .dag{font-style:normal; color:var(--ink); margin-right:.4em;}
+
+/* ============================================================
+   COMPONENT: ScoreSummary + ShareCard (a bookplate)
+   ============================================================ */
+.score-summary{text-align:center; padding:var(--s3) 0 var(--s4);}
+.score-summary .num{font-size:var(--t-3xl); font-weight:400; line-height:1; font-variant-numeric:oldstyle-nums;}
+.score-summary .lbl{font-style:italic; color:var(--muted); font-size:var(--t-md); margin-top:var(--s2);}
+
+.share-card{position:relative; background:var(--page); border:1px solid var(--ink); padding:var(--s4);
+  box-shadow:0 14px 30px -24px rgba(40,32,16,.5);}
+.share-card::after{content:""; position:absolute; inset:7px; border:1px solid var(--rule); pointer-events:none;}
+.share-card > *{position:relative;}
+.share-card .plate{font-size:var(--t-xs); letter-spacing:.34em; text-transform:uppercase; color:var(--muted); text-align:center;}
+.share-card .headline{font-size:var(--t-2xl); font-weight:400; line-height:1.15; margin:var(--s2) 0; text-align:center;}
+.share-card .hook{font-size:var(--t-md); font-style:italic; color:var(--muted); text-align:center;}
+.share-card .hook .redaction-bar{--w:6ch;}
+.share-card .marks{display:flex; justify-content:center; gap:.5rem; margin:var(--s4) 0 var(--s2); flex-wrap:wrap;}
+.share-card .marks span{width:1.6rem; height:1.6rem; display:grid; place-items:center; border:1px solid var(--rule);
+  border-radius:100px; font-size:.85rem; color:var(--muted);}
+.share-card .marks span.hit{color:var(--correct); border-color:var(--correct);}
+.share-card .marks span.no{color:var(--miss); border-color:var(--miss);}
+.share-card .foot{text-align:center; font-size:var(--t-xs); letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted); border-top:1px solid var(--rule); padding-top:var(--s2); margin-top:var(--s2);}
+
+/* ---------- Cover / title page ---------- */
+.title-page{text-align:center; padding:var(--s4) 0;}
+.title-page .imprint{font-size:var(--t-xs); letter-spacing:.3em; text-transform:uppercase; color:var(--muted);}
+.title-page h1{font-weight:400; font-size:var(--t-3xl); letter-spacing:.03em; line-height:1; margin:var(--s4) 0 var(--s2);}
+.title-page h1 .bar{background:var(--redact); color:transparent; border-radius:2px; padding:0 .1em;}
+.title-page .sub{font-style:italic; font-size:var(--t-lg); color:var(--muted); max-width:28ch; margin:0 auto;}
+.title-page .parts{margin:var(--s5) 0; display:grid; gap:var(--s2); max-width:30rem; margin-inline:auto; text-align:left;}
+.title-page .parts div{display:grid; grid-template-columns:2.4rem 1fr; gap:var(--s2); align-items:baseline; font-size:var(--t-md);}
+.title-page .parts .n{font-style:italic; color:var(--muted); text-align:right; font-variant-numeric:oldstyle-nums;}
+.title-page .edition{font-size:var(--t-xs); letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin-top:var(--s4);}
+
+/* ---------- Mockup chrome ---------- */
+.flowtag{position:fixed; top:1rem; left:50%; transform:translateX(-50%); z-index:20; font-family:var(--serif);
+  font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted);
+  background:rgba(250,246,236,.9); border:1px solid var(--rule); padding:.4rem .9rem; border-radius:100px;}
+.switch{position:fixed; z-index:20; left:50%; bottom:1rem; transform:translateX(-50%);
+  display:flex; gap:.2rem; background:var(--ink); padding:.35rem .45rem; border-radius:100px; box-shadow:0 10px 30px rgba(0,0,0,.3);}
+.switch button{border:none; background:transparent; color:#c9c1ad; cursor:pointer; font-family:var(--serif);
+  font-size:.78rem; letter-spacing:.04em; padding:.45rem .8rem; border-radius:100px; font-style:italic;}
+.switch button.active{background:var(--page); color:var(--ink); font-style:normal;}
+.hint{position:fixed; bottom:3.4rem; left:50%; transform:translateX(-50%); z-index:20; font-family:var(--serif);
+  font-style:italic; font-size:.68rem; color:var(--muted); opacity:.75;}
+</style>
+</head>
+<body>
+<main class="stage">
+
+  <!-- ============ SCREEN 1 · TITLE PAGE ============ -->
+  <section class="screen active" id="s1" aria-label="Cover">
+    <div class="leaf title-page">
+      <p class="imprint">A Diversion in Eight Parts</p>
+      <h1>RE<span class="bar" aria-hidden="true">DACT</span>ED</h1>
+      <p class="ornament" aria-hidden="true">❦</p>
+      <p class="sub">Eight old fears of new machines, each with its subject struck from the page. Name what was blacked out.</p>
+      <div class="parts">
+        <div><span class="n">i.</span><span>Read the passage as it was printed — one word censored.</span></div>
+        <div><span class="n">ii.</span><span>Write, in your own hand, what you believe lies beneath.</span></div>
+        <div><span class="n">iii.</span><span>Turn the leaf: the word, the year, and the author revealed.</span></div>
+      </div>
+      <div class="actions" style="justify-content:center;">
+        <button class="btn" onclick="go('s2')">Open the book</button>
+      </div>
+      <p class="edition">First edition · Eight passages · ~4 minutes</p>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 2 · QUOTECARD + GUESSINPUT ============ -->
+  <section class="screen" id="s2" aria-label="Quote and guess">
+    <div class="leaf quote-card">
+      <div class="running-head"><span class="r">Redacted</span><span>Passage the Third</span></div>
+
+      <blockquote>
+        They promise this <span class="redaction-bar subject" role="img" aria-label="censored subject"></span>
+        shall unburden the mind of memory itself, and grant every man the wit of a
+        <span class="redaction-bar" data-w="s" role="img" aria-label="censored"></span>. Yet I have watched it
+        make idle scholars of the diligent, forgetting how little we truly
+        <span class="redaction-bar" data-w="m" role="img" aria-label="censored"></span>.
+      </blockquote>
+      <p class="attrib-veiled">— an author, writing in a century withheld</p>
+
+      <form class="guess-input" onsubmit="go('s3'); return false;">
+        <label for="g1">Write what lies beneath the ink</label>
+        <div class="row">
+          <input id="g1" type="text" placeholder="a technology…" autocomplete="off">
+          <button class="btn" type="submit">Turn the leaf <span class="arw">→</span></button>
+        </div>
+      </form>
+
+      <p class="folio">3 of 8</p>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 3 · REVEALCARD ============ -->
+  <section class="screen" id="s3" aria-label="Reveal">
+    <div class="leaf reveal-card">
+      <div class="running-head"><span class="r">Redacted</span><span>Passage the Third · revealed</span></div>
+
+      <span class="verdict miss"><span class="seal" aria-hidden="true">✗</span> Not quite</span>
+
+      <div class="reveal-lines">
+        <p><span class="k">You wrote</span><span class="yours">the smartphone</span></p>
+        <p><span class="k">It was</span><span class="truth">the printed almanac</span></p>
+        <p><span class="k">Source</span><span class="src">A. Verger, marginalia, 1698</span></p>
+      </div>
+
+      <p class="footnote"><span class="dag">†</span>Three centuries before we blamed our phones for it,
+        a clergyman was certain that cheap print would rot the memory of the young.</p>
+
+      <div class="actions">
+        <button class="btn" onclick="go('s4')">Next passage →</button>
+        <button class="btn quiet" onclick="go('s2')">Re-read</button>
+      </div>
+      <p class="folio">3 of 8</p>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 4 · SCORESUMMARY + SHARECARD ============ -->
+  <section class="screen" id="s4" aria-label="Final result">
+    <div class="leaf">
+      <div class="running-head"><span class="r">Redacted</span><span>Colophon</span></div>
+
+      <div class="score-summary">
+        <div class="num">4 of 8</div>
+        <p class="lbl">correctly named — reasonably suspicious</p>
+      </div>
+
+      <div class="share-card">
+        <p class="plate">Ex Libris · Redacted</p>
+        <p class="headline">I named 4 of 8,<br>and was gladly fooled.</p>
+        <p class="hook">My proudest miss: I was sure a <span class="redaction-bar" data-w="s" role="img" aria-label="censored"></span>
+          from 1698 was complaining about smartphones.</p>
+        <div class="marks" aria-label="Results: 4 correct of 8">
+          <span class="no">✗</span><span class="hit">✓</span><span class="no">✗</span><span class="hit">✓</span>
+          <span class="no">✗</span><span class="hit">✓</span><span class="no">✗</span><span class="hit">✓</span>
+        </div>
+        <div class="foot">redacted.game · a diversion in eight parts</div>
+      </div>
+
+      <div class="actions" style="justify-content:center;">
+        <button class="btn" onclick="copyShare()">Copy result</button>
+        <button class="btn quiet" onclick="go('s1')">Back to title page</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<p class="flowtag">Flow A · reveal one-by-one</p>
+<p class="hint">Mockup — turn the leaves</p>
+<nav class="switch" aria-label="Screen switcher">
+  <button data-t="s1" class="active" onclick="go('s1')">Title</button>
+  <button data-t="s2" onclick="go('s2')">Quote</button>
+  <button data-t="s3" onclick="go('s3')">Reveal</button>
+  <button data-t="s4" onclick="go('s4')">Result</button>
+</nav>
+
+<script>
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', s.id===id));
+  document.querySelectorAll('.switch button').forEach(b=>b.classList.toggle('active', b.dataset.t===id));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function copyShare(){ alert('Result copied (mockup).'); }
+</script>
+</body>
+</html>
