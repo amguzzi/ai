@@ -32,9 +32,22 @@ at the bottom to walk the screens.
 | File | Role |
 |------|------|
 | `index.html` | Gallery / launcher |
-| `direction-literary.html` | **Literary — a nicely bound book** · front-runner, canonical |
+| `direction-literary.html` | **Literary — a nicely bound book** · front-runner, canonical (turn-to-reveal) |
+| `direction-literary-inline-reveal.html` | **Literary · in-place reveal** — bars un-redact on the same screen (animated) |
 | `direction-editorial.html` | Alternate — crisp daily puzzle |
 | `direction-dossier-refined.html` | Alternate — declassified report |
+
+## Reveal placement — two takes
+
+- **Turn-to-reveal** (`direction-literary.html`): guess → the leaf turns to a
+  separate RevealCard → next. Clean separation; the quote is left behind.
+- **In-place reveal** (`direction-literary-inline-reveal.html`): the reveal
+  happens on the *same* screen — the quote stays put and the black bars
+  **un-redact** (wipe away left-to-right, staggered through the sentence),
+  exposing the innovation, author and date in context, while the guess-vs-truth
+  panel expands below. Respects `prefers-reduced-motion` (bars just disappear).
+  This keeps the quote and your guess visible next to the truth, which makes the
+  "wait, *that* old?" beat land harder.
 
 ## Screens & named components
 
