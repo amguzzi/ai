@@ -26,6 +26,7 @@
   --s1:.5rem; --s2:1rem; --s3:1.5rem; --s4:2rem; --s5:3rem; --s6:4.5rem;
 }
 *{box-sizing:border-box; margin:0; padding:0;}
+button,input{font-family:inherit; touch-action:manipulation; -webkit-tap-highlight-color:rgba(36,33,26,.12);}
 html{scroll-behavior:smooth;}
 body{font-family:var(--serif); color:var(--ink);
   background:radial-gradient(120% 90% at 50% -5%, #f7f1e5, var(--paper) 60%, var(--edge));
@@ -165,31 +166,33 @@ body{font-family:var(--serif); color:var(--ink);
 
 /* Mockup chrome */
 .flowtag{position:fixed; top:1rem; left:50%; transform:translateX(-50%); z-index:20; font-family:var(--serif);
-  font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted);
+  font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); pointer-events:none;
   background:rgba(250,246,236,.9); border:1px solid var(--rule); padding:.4rem .9rem; border-radius:100px;}
-.switch{position:fixed; z-index:20; left:50%; bottom:1rem; transform:translateX(-50%);
+/* fixed mockup chrome: the bars themselves let taps pass through — only their
+   actual buttons are interactive — so they never block taps on the real UI */
+.switch{position:fixed; z-index:20; left:50%; bottom:1rem; transform:translateX(-50%); pointer-events:none;
   display:flex; gap:.2rem; background:var(--ink); padding:.35rem .45rem; border-radius:100px; box-shadow:0 10px 30px rgba(0,0,0,.3);}
-.switch button{border:none; background:transparent; color:#c9c1ad; cursor:pointer; font-family:var(--serif);
+.switch button{border:none; background:transparent; color:#c9c1ad; cursor:pointer; pointer-events:auto; font-family:var(--serif);
   font-size:.78rem; letter-spacing:.04em; padding:.45rem .8rem; border-radius:100px; font-style:italic;}
 .switch button.active{background:var(--page); color:var(--ink); font-style:normal;}
-.hint{position:fixed; bottom:3.4rem; left:50%; transform:translateX(-50%); z-index:20; font-family:var(--serif); font-style:italic; font-size:.68rem; color:var(--muted); opacity:.75;}
-.demo{position:fixed; top:3.5rem; left:50%; transform:translateX(-50%); z-index:20; display:flex; align-items:center; gap:.4rem;
+.hint{position:fixed; bottom:3.4rem; left:50%; transform:translateX(-50%); z-index:20; pointer-events:none; font-family:var(--serif); font-style:italic; font-size:.68rem; color:var(--muted); opacity:.75;}
+.demo{position:fixed; top:3.5rem; left:50%; transform:translateX(-50%); z-index:20; pointer-events:none; display:flex; align-items:center; gap:.4rem;
   background:rgba(250,246,236,.94); border:1px solid var(--rule); padding:.28rem .35rem .28rem .85rem; border-radius:100px;
   font-family:var(--serif); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); box-shadow:0 6px 18px -12px rgba(40,32,16,.5);}
-.demo button{border:none; background:transparent; cursor:pointer; font-family:var(--serif); font-size:.72rem; letter-spacing:.02em; color:var(--muted); padding:.3rem .7rem; border-radius:100px; font-style:italic;}
+.demo button{border:none; background:transparent; cursor:pointer; pointer-events:auto; white-space:nowrap; font-family:var(--serif); font-size:.72rem; letter-spacing:.02em; color:var(--muted); padding:.3rem .7rem; border-radius:100px; font-style:italic;}
 .demo button.active{background:var(--ink); color:var(--page); font-style:normal;}
 
 /* ---------- Mobile ---------- */
 @media (max-width:520px){
   :root{ --t-3xl:2.6rem; --t-2xl:1.95rem; --t-xl:1.5rem; --t-lg:1.2rem; --t-md:1rem; }
-  .stage{ padding:6rem 1rem 6.5rem; }             /* clear the fixed flowtag + demo chrome */
+  .stage{ padding:4.5rem 1rem 6.5rem; }           /* clear the demo chrome up top, switch below */
   .leaf{ padding:1.75rem 1.25rem; }
   .quote-card blockquote{ line-height:1.5; }
   .quote-card blockquote::first-letter{ font-size:2.8em; }
   .guess-input .row{ gap:var(--s2); }
   .btn{ padding:.55em 1.1em; }
-  .flowtag{ font-size:.58rem; letter-spacing:.1em; max-width:92vw; text-align:center; }
-  .demo{ top:3.2rem; font-size:.56rem; letter-spacing:.1em; }
+  .flowtag{ display:none; }                        /* decorative — drop it on mobile to declutter */
+  .demo{ top:1rem; font-size:.56rem; letter-spacing:.1em; }
   .demo button{ font-size:.68rem; padding:.3rem .6rem; }
   .share-card{ padding:var(--s4) var(--s3) var(--s3); }
   .miss .line{ font-size:1.9rem; }
