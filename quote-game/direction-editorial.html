@@ -205,12 +205,12 @@ body{
     <div class="card cover">
       <p class="kicker">Today's Puzzle</p>
       <h1>RE<span class="bar" aria-hidden="true">DACT</span>ED</h1>
-      <p class="dek">Eight quotes about technology, each with its subject blacked out.
-        Guess what they were afraid of.</p>
+      <p class="dek">Every panic about a new innovation has been written before. Eight of them —
+        the innovation blacked out. Guess what they feared.</p>
       <ul class="how">
-        <li><span class="n">1</span><p>Read a real historical quote — one word struck out.</p></li>
-        <li><span class="n">2</span><p>Type your best guess at the hidden technology.</p></li>
-        <li><span class="n">3</span><p>See the truth, the year, and just how wrong you were.</p></li>
+        <li><span class="n">1</span><p>Read a real reaction to a new innovation — its name struck out.</p></li>
+        <li><span class="n">2</span><p>Guess the innovation they were afraid of.</p></li>
+        <li><span class="n">3</span><p>See the answer — then meet the author, and the year.</p></li>
       </ul>
       <div class="actions" style="justify-content:center;">
         <button class="btn accent" onclick="go('s2')">Play today's puzzle</button>
@@ -226,7 +226,7 @@ body{
       <span class="date">Quote 3 of 8</span>
     </div>
     <div class="card quote-card">
-      <span class="eyebrow">Circa the 1600s</span>
+      <span class="eyebrow">What's the innovation?</span>
       <blockquote>
         They promise this <span class="redaction-bar subject" role="img" aria-label="redacted subject"></span>
         shall unburden the mind of memory itself. Yet I have watched it make idle
@@ -240,9 +240,9 @@ body{
       <p class="pips-label">Quote 3 of 8</p>
 
       <form class="guess-input" onsubmit="go('s3'); return false;">
-        <label for="g1">What's behind the bar?</label>
+        <label for="g1">Name the innovation</label>
         <div class="row">
-          <input id="g1" type="text" placeholder="Type a technology…" autocomplete="off">
+          <input id="g1" type="text" placeholder="Name an innovation…" autocomplete="off">
           <button class="btn" type="submit">Guess</button>
         </div>
       </form>
@@ -260,18 +260,18 @@ body{
 
       <div class="reveal-rows">
         <div class="reveal-row">
-          <div class="k">You guessed</div>
-          <div class="v"><span class="yours">the smartphone</span></div>
+          <div class="k">You named</div>
+          <div class="v"><span class="yours">artificial intelligence</span></div>
         </div>
         <div class="reveal-row">
           <div class="k">It was</div>
           <div class="v"><span class="truth">the printed almanac</span></div>
-          <div class="src">A. Verger · marginalia · 1698</div>
+          <div class="src">A. Verger · 1698</div>
         </div>
       </div>
 
-      <p class="blurb">Three centuries before we blamed our phones for it, a clergyman was
-        sure cheap print would rot the memory of the young.”</p>
+      <p class="blurb">Three hundred years before we feared machines would think for us, a clergyman
+        was sure cheap print would rot the memory of the young.”</p>
 
       <div class="actions">
         <button class="btn" onclick="go('s4')">Next quote</button>
@@ -287,16 +287,14 @@ body{
       <span class="date">Complete · 8 of 8</span>
     </div>
     <div class="card">
-      <div class="score-summary">
-        <div class="num">4<span style="color:var(--ink-soft);">/8</span></div>
-        <p class="lbl">Reasonably suspicious</p>
-      </div>
-
+      <!-- Finish leads with the biggest miss, grade second.
+           Miss logic: guessed "AI" on any wrong answer → oldest such innovation;
+           else → oldest wrong innovation + the player's guess. -->
       <div class="share-card">
         <p class="brand">The <b>Redacted</b></p>
-        <p class="headline">I scored 4/8 and got gloriously fooled.</p>
-        <p class="hook">Proudest miss: I swore a <span class="redaction-bar" data-w="s" role="img" aria-label="redacted"></span>
-          from 1698 was ranting about smartphones.</p>
+        <p class="hook" style="text-transform:uppercase;letter-spacing:.1em;font-size:var(--t-xs);color:var(--miss);">My biggest miss</p>
+        <p class="headline">I was certain the printed almanac — 1698 — was artificial intelligence.</p>
+        <p class="hook">The Redacted got me: <strong>4 of 8</strong> · reasonably suspicious.</p>
         <div class="grid" aria-label="Results: 4 correct of 8">
           <span class="no">✗</span><span class="hit">✓</span><span class="no">✗</span><span class="hit">✓</span>
           <span class="no">✗</span><span class="hit">✓</span><span class="no">✗</span><span class="hit">✓</span>
