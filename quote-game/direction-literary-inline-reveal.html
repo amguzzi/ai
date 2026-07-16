@@ -93,21 +93,24 @@ body{font-family:var(--serif); color:var(--ink);
 .guess-input{margin-top:var(--s2); transition:opacity .45s;}
 .guess-input label{display:block; font-size:var(--t-xs); letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:var(--s2); text-align:center;}
 .guess-input .row{display:flex; gap:var(--s3); align-items:flex-end;}
-.guess-input .field{position:relative; flex:1; display:flex; align-items:flex-end;}
-.guess-input input{flex:1; font-family:var(--serif); font-size:var(--t-lg); font-style:italic; color:var(--ink);
-  background:transparent; border:none; border-bottom:1.5px solid var(--ink); padding:.2em 3rem .35em .1em; outline:none;}
+/* the box: border lives on the field; the mark is a flex item centered with the text */
+.guess-input .field{flex:1; min-width:0; display:flex; align-items:center; gap:.5rem; border-bottom:1.5px solid var(--ink);}
+.guess-input .field:focus-within{border-bottom-width:2px;}
+.guess-input input{flex:1; min-width:0; font-family:var(--serif); font-size:var(--t-lg); font-style:italic; color:var(--ink);
+  background:transparent; border:none; padding:.2em .1em .3em; outline:none;}
 .guess-input input::placeholder{color:var(--muted); opacity:.6;}
-.guess-input input:focus{border-bottom-width:2px;}
-/* verdict mark lives inside the guess box, centered vertically, shown on reveal */
-.guess-input .mark{position:absolute; right:.15rem; top:50%; transform:translateY(-50%); width:2.2rem; height:2.2rem;
-  border-radius:100px; display:none; place-items:center; border:2px solid; font-size:1.25rem; font-style:normal;}
+/* verdict mark: space reserved (visibility) so nothing shifts; vertically centered on the guess line */
+.guess-input .mark{flex:none; width:1.9rem; height:1.9rem; border-radius:100px; display:grid; place-items:center;
+  border:2px solid; font-size:1.1rem; line-height:1; font-style:normal; visibility:hidden;}
 .guess-input .mark.miss{color:var(--miss); border-color:var(--miss);}
 .guess-input .mark.ok{color:var(--correct); border-color:var(--correct);}
 .play.revealed .guess-input{pointer-events:none;}
-.play.revealed .guess-input .mark{display:grid;}
+.play.revealed .guess-input .mark{visibility:visible;}
 .play.revealed .guess-input .reveal-btn{visibility:hidden;}  /* keep footprint so the box doesn't move */
-/* wrong guess is struck through in place (correct case would use .ok, no strike) */
-.play.revealed .guess-input input{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--miss); text-decoration-thickness:1.5px;}
+/* wrong guess is struck through in place; a correct guess is not */
+.play.revealed:not(.ex-correct) .guess-input input{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--miss); text-decoration-thickness:1.5px;}
+.play.revealed.ex-correct .guess-input input{color:var(--ink);}
+.answer .lead-ok{color:var(--correct);}
 
 /* Buttons */
 .btn{font-family:var(--serif); font-size:var(--t-md); cursor:pointer; background:var(--ink); color:var(--page);
@@ -170,6 +173,28 @@ body{font-family:var(--serif); color:var(--ink);
   font-size:.78rem; letter-spacing:.04em; padding:.45rem .8rem; border-radius:100px; font-style:italic;}
 .switch button.active{background:var(--page); color:var(--ink); font-style:normal;}
 .hint{position:fixed; bottom:3.4rem; left:50%; transform:translateX(-50%); z-index:20; font-family:var(--serif); font-style:italic; font-size:.68rem; color:var(--muted); opacity:.75;}
+.demo{position:fixed; top:3.5rem; left:50%; transform:translateX(-50%); z-index:20; display:flex; align-items:center; gap:.4rem;
+  background:rgba(250,246,236,.94); border:1px solid var(--rule); padding:.28rem .35rem .28rem .85rem; border-radius:100px;
+  font-family:var(--serif); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); box-shadow:0 6px 18px -12px rgba(40,32,16,.5);}
+.demo button{border:none; background:transparent; cursor:pointer; font-family:var(--serif); font-size:.72rem; letter-spacing:.02em; color:var(--muted); padding:.3rem .7rem; border-radius:100px; font-style:italic;}
+.demo button.active{background:var(--ink); color:var(--page); font-style:normal;}
+
+/* ---------- Mobile ---------- */
+@media (max-width:520px){
+  :root{ --t-3xl:2.6rem; --t-2xl:1.95rem; --t-xl:1.5rem; --t-lg:1.2rem; --t-md:1rem; }
+  .stage{ padding:6rem 1rem 6.5rem; }             /* clear the fixed flowtag + demo chrome */
+  .leaf{ padding:1.75rem 1.25rem; }
+  .quote-card blockquote{ line-height:1.5; }
+  .quote-card blockquote::first-letter{ font-size:2.8em; }
+  .guess-input .row{ gap:var(--s2); }
+  .btn{ padding:.55em 1.1em; }
+  .flowtag{ font-size:.58rem; letter-spacing:.1em; max-width:92vw; text-align:center; }
+  .demo{ top:3.2rem; font-size:.56rem; letter-spacing:.1em; }
+  .demo button{ font-size:.68rem; padding:.3rem .6rem; }
+  .share-card{ padding:var(--s4) var(--s3) var(--s3); }
+  .miss .line{ font-size:1.9rem; }
+  .reveal-lines .k{ width:5rem; }
+}
 </style>
 </head>
 <body>
@@ -207,7 +232,7 @@ body{font-family:var(--serif); color:var(--ink);
         <div class="row">
           <div class="field">
             <input id="g1" type="text" value="artificial intelligence" autocomplete="off" aria-labelledby="ask">
-            <span class="mark miss" role="img" aria-label="incorrect">✗</span>
+            <span class="mark miss" id="mark" role="img" aria-label="incorrect">✗</span>
           </div>
           <button class="btn reveal-btn" type="submit">Reveal</button>
         </div>
@@ -216,7 +241,7 @@ body{font-family:var(--serif); color:var(--ink);
       <!-- reveal expands here, in place; the quote above stays put -->
       <div class="reveal-panel" aria-live="polite">
         <div class="rule"></div>
-        <p class="answer">It was <span class="truth">the printed almanac</span> — <span class="src">A. Verger, <b>1698</b></span>.</p>
+        <p class="answer" id="answer">It was <span class="truth">the printed almanac</span> — <span class="src">A. Verger, <b>1698</b></span>.</p>
         <p class="footnote"><span class="dag">†</span>Three hundred years before we feared machines would think for us,
           a clergyman was certain that cheap print would rot the memory of the young.</p>
         <div class="actions">
@@ -260,6 +285,11 @@ body{font-family:var(--serif); color:var(--ink);
 </main>
 
 <p class="flowtag">In-place reveal · the ink dissolves on the page</p>
+<div class="demo" role="group" aria-label="Example outcome (mockup)">
+  <span>Example</span>
+  <button id="ex-miss" class="active" onclick="setExample('miss')">Missed ✗</button>
+  <button id="ex-correct" onclick="setExample('correct')">Correct ✓</button>
+</div>
 <p class="hint">Mockup — press “Reveal”, then “↺ Redact again” to replay</p>
 <nav class="switch" aria-label="Screen switcher">
   <button data-t="s1" class="active" onclick="go('s1')">Title</button>
@@ -276,6 +306,21 @@ function go(id){
   window.scrollTo({top:0, behavior:'smooth'});
 }
 function reveal(){ document.getElementById('play').classList.add('revealed'); }
+function setExample(kind){                /* mockup: preview the miss vs correct outcome */
+  var p=document.getElementById('play'), input=document.getElementById('g1'),
+      mark=document.getElementById('mark'), ans=document.getElementById('answer'), correct=(kind==='correct');
+  p.classList.toggle('ex-correct', correct);
+  input.value = correct ? 'the printed almanac' : 'artificial intelligence';
+  mark.textContent = correct ? '✓' : '✗';
+  mark.className = 'mark ' + (correct ? 'ok' : 'miss');
+  mark.setAttribute('aria-label', correct ? 'correct' : 'incorrect');
+  ans.innerHTML = correct
+    ? '<span class="lead-ok">Just so.</span> — <span class="src">A. Verger, <b>1698</b></span>.'
+    : 'It was <span class="truth">the printed almanac</span> — <span class="src">A. Verger, <b>1698</b></span>.';
+  document.getElementById('ex-miss').classList.toggle('active', !correct);
+  document.getElementById('ex-correct').classList.toggle('active', correct);
+  p.classList.add('revealed');           /* show the outcome so it's visible on the toggle */
+}
 function redactAgain(){                 /* re-hide, so you can press Reveal and watch it again */
   var p=document.getElementById('play'); p.classList.remove('revealed');
 }
