@@ -85,8 +85,7 @@ body{font-family:var(--serif); color:var(--ink);
   .play.revealed .term .word{ animation:none; }
 }
 
-.the-question{font-size:var(--t-lg); font-style:italic; text-align:center; margin:var(--s4) 0 var(--s2); transition:opacity .4s;}
-.play.revealed .the-question{opacity:0; height:0; margin:0; overflow:hidden;}
+.the-question{font-size:var(--t-lg); font-style:italic; text-align:center; margin:var(--s4) 0 var(--s2);}
 
 /* ============================================================
    COMPONENT: GuessInput  (dims but stays, in-context, on reveal)
@@ -96,17 +95,17 @@ body{font-family:var(--serif); color:var(--ink);
 .guess-input .row{display:flex; gap:var(--s3); align-items:flex-end;}
 .guess-input .field{position:relative; flex:1; display:flex; align-items:flex-end;}
 .guess-input input{flex:1; font-family:var(--serif); font-size:var(--t-lg); font-style:italic; color:var(--ink);
-  background:transparent; border:none; border-bottom:1.5px solid var(--ink); padding:.2em 2.2rem .35em .1em; outline:none;}
+  background:transparent; border:none; border-bottom:1.5px solid var(--ink); padding:.2em 3rem .35em .1em; outline:none;}
 .guess-input input::placeholder{color:var(--muted); opacity:.6;}
 .guess-input input:focus{border-bottom-width:2px;}
-/* verdict mark lives inside the guess box, shown on reveal */
-.guess-input .mark{position:absolute; right:.05rem; bottom:.3rem; width:1.5rem; height:1.5rem; border-radius:100px;
-  display:none; place-items:center; border:1.5px solid; font-size:.85rem; font-style:normal;}
+/* verdict mark lives inside the guess box, centered vertically, shown on reveal */
+.guess-input .mark{position:absolute; right:.15rem; top:50%; transform:translateY(-50%); width:2.2rem; height:2.2rem;
+  border-radius:100px; display:none; place-items:center; border:2px solid; font-size:1.25rem; font-style:normal;}
 .guess-input .mark.miss{color:var(--miss); border-color:var(--miss);}
 .guess-input .mark.ok{color:var(--correct); border-color:var(--correct);}
 .play.revealed .guess-input{pointer-events:none;}
 .play.revealed .guess-input .mark{display:grid;}
-.play.revealed .guess-input .reveal-btn{display:none;}
+.play.revealed .guess-input .reveal-btn{visibility:hidden;}  /* keep footprint so the box doesn't move */
 /* wrong guess is struck through in place (correct case would use .ok, no strike) */
 .play.revealed .guess-input input{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--miss); text-decoration-thickness:1.5px;}
 
@@ -155,7 +154,7 @@ body{font-family:var(--serif); color:var(--ink);
 .title-page .imprint{font-size:var(--t-xs); letter-spacing:.28em; text-transform:uppercase; color:var(--muted);}
 .title-page h1{font-weight:400; font-size:var(--t-3xl); letter-spacing:.03em; line-height:1; margin:var(--s4) 0 var(--s2);}
 .title-page h1 .bar{background:var(--redact); color:transparent; border-radius:2px; padding:0 .1em;}
-.title-page .sub{font-style:italic; font-size:var(--t-lg); color:var(--muted); max-width:30ch; margin:0 auto;}
+.title-page .sub{font-style:italic; font-size:var(--t-lg); color:var(--muted); max-width:40ch; margin:0 auto;}
 .title-page .parts{margin:var(--s5) 0; display:grid; gap:var(--s2); max-width:32rem; margin-inline:auto; text-align:left;}
 .title-page .parts div{display:grid; grid-template-columns:2.4rem 1fr; gap:var(--s2); align-items:baseline; font-size:var(--t-md);}
 .title-page .parts .n{font-style:italic; color:var(--muted); text-align:right; font-variant-numeric:oldstyle-nums;}
@@ -179,19 +178,13 @@ body{font-family:var(--serif); color:var(--ink);
   <!-- ============ SCREEN 1 · TITLE PAGE ============ -->
   <section class="screen active" id="s1" aria-label="Cover">
     <div class="leaf title-page">
-      <p class="imprint">Everything old was new once</p>
       <h1>RE<span class="bar" aria-hidden="true">DACT</span>ED</h1>
       <p class="ornament" aria-hidden="true">❦</p>
-      <p class="sub">Every panic about a new innovation has been written before. We've struck the innovation from each — read the fear, and name it.</p>
-      <div class="parts">
-        <div><span class="n">i.</span><span>Read a real reaction to some new innovation — its name blacked out.</span></div>
-        <div><span class="n">ii.</span><span>Name the innovation you think they feared.</span></div>
-        <div><span class="n">iii.</span><span>Watch the ink lift — the answer, the author, and the year, right on the page.</span></div>
-      </div>
+      <p class="sub">Innovation has always been disruptive. Read a real reaction, and guess the innovation that sparked it.</p>
       <div class="actions" style="justify-content:center;">
-        <button class="btn" onclick="go('s2')">Begin reading</button>
+        <button class="btn" onclick="go('s2')">Begin</button>
       </div>
-      <p class="edition">Eight passages · about four minutes · play once</p>
+      <p class="edition">Eight passages · about four minutes</p>
     </div>
   </section>
 
@@ -208,7 +201,6 @@ body{font-family:var(--serif); color:var(--ink);
         and set it down this <span class="term" style="--i:3"><span class="word" aria-hidden="true">Michaelmas</span><span class="bar" role="img" aria-label="a date, redacted"></span></span> past,
         that a later age might judge which of us the fool.
       </blockquote>
-      <p class="attrib-veiled"><span class="dash">— </span><span class="term" style="--i:4"><span class="word" aria-hidden="true">A. Verger, 1698</span><span class="bar" role="img" aria-label="author and date, redacted"></span></span></p>
 
       <p class="the-question" id="ask">What's the innovation?</p>
       <form class="guess-input" onsubmit="reveal(); return false;">
