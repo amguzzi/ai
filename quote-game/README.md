@@ -36,6 +36,22 @@ at the bottom to walk the screens.
 | `direction-editorial.html` | Alternate — crisp daily puzzle |
 | `direction-dossier-refined.html` | Alternate — declassified report |
 
+## Round 4 — simple & clean explorations
+
+Three stripped-back looks (book / newspaper / literary journal) plus an
+interaction lab, all sharing the rebuilt, browser-stable guess row:
+
+| File | What it is |
+|------|------------|
+| `explore-interactions.html` | **Interaction Lab** — six un-redaction styles (dissolve, peel back, fade, drop, slide, strike) selectable via chips, plus three delight moments: the verdict **stamps in** with a little overshoot, the answer's **underline draws itself**, and the **year rolls back** from 2026 to 1698 |
+| `explore-folio.html` | **Folio** — a classic book page: one typeface (EB Garamond), roman-numeral folio, small caps, an asterism, whitespace as the design |
+| `explore-broadsheet.html` | **Broadsheet** — clean newspaper: masthead, double rule, dateline ("Price: one guess"), hairlines, black on white with one press-red |
+| `explore-quarterly.html` | **Quarterly** — modern literary journal: flat page, light large serif, huge hanging quote mark, tiny sans labels, one ochre accent |
+
+The guess-row was rebuilt with explicit heights (`.gline`/`.gmark`) after the
+verdict mark kept drifting across browsers — the mark is now a flex sibling
+centered on a fixed-height line and can no longer straddle the underline.
+
 ## Reveal happens in place
 
 There is **no separate reveal screen** — you stay on the quote so you can see the

@@ -91,26 +91,26 @@ body{font-family:var(--serif); color:var(--ink);
 /* ============================================================
    COMPONENT: GuessInput  (dims but stays, in-context, on reveal)
    ============================================================ */
-.guess-input{margin-top:var(--s2); transition:opacity .45s;}
-.guess-input label{display:block; font-size:var(--t-xs); letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:var(--s2); text-align:center;}
-.guess-input .row{display:flex; gap:var(--s3); align-items:flex-end;}
-/* the box: border lives on the field; the mark is a flex item centered with the text */
-.guess-input .field{position:relative; flex:1; min-width:0; border-bottom:1.5px solid var(--ink);}
-.guess-input .field:focus-within{border-bottom-width:2px;}
-.guess-input input{width:100%; font-family:var(--serif); font-size:var(--t-lg); font-style:italic; color:var(--ink);
-  background:transparent; border:none; padding:.15em 2.7rem .3em .1em; outline:none;}
-.guess-input input::placeholder{color:var(--muted); opacity:.6;}
-/* verdict mark: absolute, so it never stretches the box; centered on the guess line; its space is held by the input's right padding */
-.guess-input .mark{position:absolute; right:.1rem; top:50%; transform:translateY(-50%); width:1.9rem; height:1.9rem;
-  border-radius:100px; display:grid; place-items:center; border:2px solid; font-size:1.1rem; line-height:1; font-style:normal; visibility:hidden;}
-.guess-input .mark.miss{color:var(--miss); border-color:var(--miss);}
-.guess-input .mark.ok{color:var(--correct); border-color:var(--correct);}
+/* ---- guess row, rebuilt: heights are explicit so it renders identically in
+   every browser and the mark can never drift from the written line ---- */
+.guess-input{margin-top:var(--s2);}
+.guess-input .row{display:flex; align-items:center; gap:var(--s3);}
+.gline{flex:1; min-width:0; display:flex; align-items:center; gap:.45rem;
+  height:2.5rem; border-bottom:1.5px solid var(--ink);}
+.gline:focus-within{border-bottom-width:2px;}
+.gline input{flex:1; min-width:0; height:100%; font-family:var(--serif); font-size:var(--t-lg);
+  font-style:italic; color:var(--ink); background:transparent; border:none; outline:none; padding:0 .05em;}
+.gline input::placeholder{color:var(--muted); opacity:.6;}
+.gmark{flex:none; width:1.5rem; height:1.5rem; border-radius:100px; display:grid; place-items:center;
+  border:1.5px solid; font-size:.95rem; line-height:1; font-style:normal; visibility:hidden;}
+.gmark.miss{color:var(--miss); border-color:var(--miss);}
+.gmark.ok{color:var(--correct); border-color:var(--correct);}
 .play.revealed .guess-input{pointer-events:none;}
-.play.revealed .guess-input .mark{visibility:visible;}
-.play.revealed .guess-input .reveal-btn{visibility:hidden;}  /* keep footprint so the box doesn't move */
+.play.revealed .gmark{visibility:visible;}
+.play.revealed .reveal-btn{visibility:hidden;}  /* keep footprint so the box doesn't move */
 /* wrong guess is struck through in place; a correct guess is not */
-.play.revealed:not(.ex-correct) .guess-input input{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--miss); text-decoration-thickness:1.5px;}
-.play.revealed.ex-correct .guess-input input{color:var(--ink);}
+.play.revealed:not(.ex-correct) .gline input{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--miss); text-decoration-thickness:1.5px;}
+.play.revealed.ex-correct .gline input{color:var(--ink);}
 .answer .lead-ok{color:var(--correct);}
 
 /* Buttons */
@@ -232,9 +232,9 @@ body{font-family:var(--serif); color:var(--ink);
       <p class="the-question" id="ask">What's the innovation?</p>
       <form class="guess-input" onsubmit="reveal(); return false;">
         <div class="row">
-          <div class="field">
+          <div class="gline">
             <input id="g1" type="text" value="artificial intelligence" autocomplete="off" aria-labelledby="ask">
-            <span class="mark miss" id="mark" role="img" aria-label="incorrect">✗</span>
+            <span class="gmark miss" id="mark" role="img" aria-label="incorrect">✗</span>
           </div>
           <button class="btn reveal-btn" type="submit">Reveal</button>
         </div>
@@ -313,7 +313,7 @@ function setExample(kind){                /* mockup: preview the miss vs correct
   p.classList.toggle('ex-correct', correct);
   input.value = correct ? 'the printed almanac' : 'artificial intelligence';
   mark.textContent = correct ? '✓' : '✗';
-  mark.className = 'mark ' + (correct ? 'ok' : 'miss');
+  mark.className = 'gmark ' + (correct ? 'ok' : 'miss');
   mark.setAttribute('aria-label', correct ? 'correct' : 'incorrect');
   ans.innerHTML = correct
     ? '<span class="lead-ok">Just so.</span> — <span class="src">A. Verger, <b>1698</b></span>.'

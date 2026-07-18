@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redacted — Interaction Lab (reveal patterns &amp; delight moments)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   INTERACTION LAB
+   One quote, six un-redaction styles, plus the choreography of
+   the whole reveal: bars lift → the guess is struck & the mark
+   stamps in → the panel opens, the year rolls back three
+   centuries, and the answer's underline draws itself.
+   Pick a style chip, press Reveal, press ↺ to replay.
+   ============================================================ */
+:root{
+  --paper:#f4eee1; --page:#faf6ec; --edge:#e7dfcc;
+  --ink:#24211a; --muted:#6a6353; --rule:#d8cfb8; --redact:#1c1912;
+  --correct:#3a5741; --miss:#8a3a2c;
+  --serif:'Newsreader', Georgia, serif;
+  --t-xs:.74rem; --t-sm:.9rem; --t-md:1.1rem; --t-lg:1.45rem; --t-xl:1.9rem;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+button,input{font-family:inherit; touch-action:manipulation;}
+body{font-family:var(--serif); color:var(--ink); line-height:1.62;
+  background:radial-gradient(120% 90% at 50% -5%, #f7f1e5, var(--paper) 60%, var(--edge));
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;}
+.stage{max-width:640px; margin:0 auto; padding:2.5rem 1.25rem 4rem;}
+.leaf{position:relative; background:var(--page); border:1px solid var(--edge);
+  padding:2.5rem clamp(1.25rem,5.5vw,3rem);
+  box-shadow:0 1px 0 #fff inset, 0 24px 50px -34px rgba(40,32,16,.55);}
+.leaf::before{content:""; position:absolute; top:0; bottom:0; left:0; width:14px;
+  background:linear-gradient(90deg, rgba(40,32,16,.09), transparent); pointer-events:none;}
+.running-head{display:flex; justify-content:space-between; font-size:var(--t-xs); letter-spacing:.24em;
+  text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--rule);
+  padding-bottom:.7rem; margin-bottom:1.6rem;}
+
+/* ---------- style chips (in-flow, never fixed) ---------- */
+.chips{display:flex; flex-wrap:wrap; align-items:center; gap:.4rem; margin-bottom:1.4rem;}
+.chips .lbl{font-size:var(--t-xs); letter-spacing:.18em; text-transform:uppercase; color:var(--muted); margin-right:.3rem;}
+.chip{font-family:var(--serif); font-style:italic; font-size:var(--t-sm); color:var(--muted);
+  background:transparent; border:1px solid var(--rule); border-radius:100px; padding:.3em .95em; cursor:pointer;}
+.chip:hover{border-color:var(--ink); color:var(--ink);}
+.chip.on{background:var(--ink); border-color:var(--ink); color:var(--page); font-style:normal;}
+
+/* ---------- quote & bars ---------- */
+blockquote{font-size:var(--t-xl); line-height:1.55; font-weight:400;}
+.term{position:relative; display:inline; white-space:nowrap;}
+.term .bar{position:absolute; inset:-1px -2px; background:var(--redact); border-radius:1.5px;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.06), inset 0 -1px 2px rgba(0,0,0,.45);}
+.play.revealed .subject .word{border-bottom:2px solid var(--correct); font-weight:500;}
+
+/* ============================================================
+   THE SIX UN-REDACTION STYLES (all bars at once, no stagger)
+   ============================================================ */
+/* 1 · Dissolve — ink fades and blurs away (the current default) */
+.play[data-p="dissolve"].revealed .term .bar{animation:pDissolve 1s cubic-bezier(.4,0,.2,1) forwards;}
+@keyframes pDissolve{to{opacity:0; filter:blur(3px); transform:scale(1.05);}}
+
+/* 2 · Peel back — the bar lifts off the page like tape */
+.play[data-p="peel"].revealed .term .bar{transform-origin:50% 0; animation:pPeel .9s cubic-bezier(.55,0,.3,1) forwards;}
+@keyframes pPeel{
+  55%{transform:perspective(480px) rotateX(-68deg); opacity:1; box-shadow:0 10px 12px -4px rgba(0,0,0,.3);}
+  100%{transform:perspective(480px) rotateX(-102deg) translateY(-30%); opacity:0;}}
+
+/* 3 · Fade — the plainest possible exit */
+.play[data-p="fade"].revealed .term .bar{animation:pFade 1.1s ease forwards;}
+@keyframes pFade{to{opacity:0;}}
+
+/* 4 · Drop — the bar falls off the line, with gravity */
+.play[data-p="drop"].revealed .term .bar{animation:pDrop .85s cubic-bezier(.5,.05,.9,.6) forwards;}
+@keyframes pDrop{
+  10%{transform:translateY(-2px);}
+  70%{opacity:1;}
+  100%{transform:translateY(2.4em) rotate(4deg); opacity:0;}}
+
+/* 5 · Slide — the slip of paper is pulled away sideways */
+.play[data-p="slide"].revealed .term .bar{animation:pSlide .75s cubic-bezier(.55,0,.3,1) forwards;}
+@keyframes pSlide{
+  60%{opacity:.9;}
+  100%{transform:translateX(115%); opacity:0;}}
+
+/* 6 · Strike — the censor's bar collapses into a strikethrough, then lifts */
+.play[data-p="strike"].revealed .term .bar{animation:pStrike 1.05s cubic-bezier(.6,0,.3,1) forwards;}
+@keyframes pStrike{
+  45%{transform:scaleY(.14); opacity:1;}
+  70%{transform:scaleY(.14); opacity:1;}
+  100%{transform:scaleY(.14); opacity:0;}}
+
+@media (prefers-reduced-motion:reduce){
+  .play.revealed .term .bar{animation:none!important; opacity:0!important;}
+}
+
+/* ---------- question + guess row (the verified pattern) ---------- */
+.question{font-size:var(--t-lg); font-style:italic; text-align:center; margin:1.8rem 0 .8rem;}
+.row{display:flex; align-items:center; gap:1.2rem;}
+.gline{flex:1; min-width:0; display:flex; align-items:center; gap:.45rem; height:2.5rem; border-bottom:1.5px solid var(--ink);}
+.gline input{flex:1; min-width:0; height:100%; font-family:var(--serif); font-size:var(--t-lg);
+  font-style:italic; color:var(--ink); background:transparent; border:none; outline:none; padding:0 .05em;}
+.gmark{flex:none; width:1.5rem; height:1.5rem; border-radius:100px; display:grid; place-items:center;
+  border:1.5px solid; font-size:.95rem; line-height:1; font-style:normal; visibility:hidden;
+  color:var(--miss); border-color:var(--miss);}
+.btn{font-family:var(--serif); font-size:var(--t-md); background:var(--ink); color:var(--page);
+  border:1px solid var(--ink); border-radius:2px; padding:.55em 1.4em; cursor:pointer; white-space:nowrap;}
+.btn:hover{opacity:.9;}
+.btn.quiet{background:transparent; color:var(--ink); border-color:var(--rule);}
+.play.revealed .reveal-btn{visibility:hidden;}
+.play.revealed .gline input{color:var(--muted); text-decoration:line-through;
+  text-decoration-color:var(--miss); text-decoration-thickness:1.5px; pointer-events:none;}
+
+/* DELIGHT · the verdict stamps in (slight overshoot, like a librarian's stamp) */
+.play.revealed .gmark{visibility:visible; animation:stamp .5s cubic-bezier(.2,1.4,.4,1) .65s backwards;}
+@keyframes stamp{
+  0%{opacity:0; transform:scale(1.9) rotate(-14deg);}
+  70%{opacity:1; transform:scale(.9) rotate(2deg);}
+  100%{opacity:1; transform:scale(1) rotate(0deg);}}
+@media (prefers-reduced-motion:reduce){.play.revealed .gmark{animation:none;}}
+
+/* ---------- reveal panel ---------- */
+.panel{max-height:0; opacity:0; overflow:hidden; transition:max-height .5s ease .8s, opacity .5s ease .8s;}
+.play.revealed .panel{max-height:340px; opacity:1;}
+.answer{font-size:var(--t-lg); margin-top:1.1rem;}
+/* DELIGHT · the answer's underline draws itself left → right */
+.answer .truth{font-weight:500; background:linear-gradient(var(--correct),var(--correct)) 0 100% / 0% 2px no-repeat;}
+.play.revealed .answer .truth{animation:draw .55s ease-out 1.45s forwards;}
+@keyframes draw{to{background-size:100% 2px;}}
+@media (prefers-reduced-motion:reduce){.answer .truth{background-size:100% 2px;} .play.revealed .answer .truth{animation:none;}}
+.answer .src{font-style:italic; color:var(--muted);}
+/* DELIGHT · the year rolls back three centuries (JS, see below) */
+.answer .yr{font-style:normal; font-weight:600; color:var(--ink); font-variant-numeric:tabular-nums;}
+.note{border-top:1px solid var(--rule); font-style:italic; color:var(--muted); font-size:var(--t-md);
+  margin-top:1rem; padding-top:.9rem;}
+.actions{display:flex; gap:1rem; margin-top:1.1rem;}
+
+/* ---------- watch-for legend ---------- */
+.legend{margin-top:2rem; font-size:var(--t-sm); color:var(--muted);}
+.legend p{margin:.2rem 0;}
+.legend b{color:var(--ink); font-weight:500;}
+@media (max-width:520px){
+  :root{--t-xl:1.5rem; --t-lg:1.2rem;}
+  .stage{padding:1.25rem .9rem 3rem;}
+  .leaf{padding:1.75rem 1.1rem;}
+}
+</style>
+</head>
+<body>
+<main class="stage">
+  <div class="leaf play" id="play" data-p="dissolve">
+    <div class="running-head"><span>Redacted · Interaction Lab</span><span>Passage the Third</span></div>
+
+    <div class="chips" role="group" aria-label="Un-redaction style">
+      <span class="lbl">Reveal style</span>
+      <button class="chip on" data-p="dissolve" onclick="setP(this)">Dissolve</button>
+      <button class="chip" data-p="peel" onclick="setP(this)">Peel back</button>
+      <button class="chip" data-p="fade" onclick="setP(this)">Fade</button>
+      <button class="chip" data-p="drop" onclick="setP(this)">Drop</button>
+      <button class="chip" data-p="slide" onclick="setP(this)">Slide</button>
+      <button class="chip" data-p="strike" onclick="setP(this)">Strike</button>
+    </div>
+
+    <blockquote>
+      They promise this <span class="term subject"><span class="word">the printed almanac</span><span class="bar" role="img" aria-label="the innovation, redacted"></span></span>
+      will unburden the mind of memory itself — already the young scarce trouble to learn
+      what they may so easily look up. I have argued the point with
+      <span class="term"><span class="word">the Dean of Wells</span><span class="bar" role="img" aria-label="a name, redacted"></span></span>,
+      and set it down this <span class="term"><span class="word">Michaelmas</span><span class="bar" role="img" aria-label="a date, redacted"></span></span> past,
+      that a later age might judge which of us the fool.
+    </blockquote>
+
+    <p class="question" id="ask">What's the innovation?</p>
+    <form onsubmit="reveal(); return false;">
+      <div class="row">
+        <div class="gline">
+          <input id="g1" type="text" value="artificial intelligence" autocomplete="off" aria-labelledby="ask">
+          <span class="gmark" role="img" aria-label="incorrect">✗</span>
+        </div>
+        <button class="btn reveal-btn" type="submit">Reveal</button>
+      </div>
+    </form>
+
+    <div class="panel" aria-live="polite">
+      <p class="answer">It was <span class="truth">the printed almanac</span> —
+        <span class="src">A. Verger, <b class="yr" id="yr">1698</b>.</span></p>
+      <p class="note">Three hundred years before we feared machines would think for us, a clergyman
+        was certain that cheap print would rot the memory of the young.</p>
+      <div class="actions">
+        <button class="btn quiet" onclick="again()">↺ Redact again</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <p><b>What to watch on Reveal:</b></p>
+    <p>1 · the bars lift in the chosen style — all at once;</p>
+    <p>2 · the guess is struck through and the <b>✗ stamps in</b> with a little overshoot;</p>
+    <p>3 · the panel opens and the <b>year rolls back</b> from 2026 to 1698 — the “wait, <i>that</i> old?” beat;</p>
+    <p>4 · the answer's <b>underline draws itself</b> under the truth.</p>
+    <p style="margin-top:.6rem;">Switching styles after a reveal re-redacts automatically so you can compare quickly.</p>
+  </div>
+</main>
+
+<script>
+/* Lab wiring only — no game logic. */
+var play=document.getElementById('play'), yrEl=document.getElementById('yr'), yrTimer=null;
+var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function reveal(){
+  play.classList.add('revealed');
+  rollYear();
+}
+function again(){
+  play.classList.remove('revealed');
+  if(yrTimer){cancelAnimationFrame(yrTimer); yrTimer=null;}
+  yrEl.textContent='1698';
+}
+function setP(btn){
+  var wasRevealed=play.classList.contains('revealed');
+  play.setAttribute('data-p', btn.getAttribute('data-p'));
+  document.querySelectorAll('.chip').forEach(function(c){c.classList.toggle('on', c===btn);});
+  if(wasRevealed){ /* re-redact, then replay in the new style */
+    play.classList.remove('revealed');
+    void play.offsetWidth;
+    setTimeout(function(){ play.classList.add('revealed'); rollYear(); }, 120);
+  }
+}
+/* the year rolls back from 2026 to 1698, easing out as it lands */
+function rollYear(){
+  if(reduced){ yrEl.textContent='1698'; return; }
+  var from=2026, to=1698, dur=1200, delay=900, t0=null;
+  yrEl.textContent=String(from);
+  function step(ts){
+    if(t0===null) t0=ts;
+    var t=(ts-t0-delay)/dur;
+    if(t<0){ yrTimer=requestAnimationFrame(step); return; }
+    if(t>1) t=1;
+    var e=1-Math.pow(1-t,3); /* ease-out cubic */
+    yrEl.textContent=String(Math.round(from+(to-from)*e));
+    if(t<1){ yrTimer=requestAnimationFrame(step); } else { yrTimer=null; }
+  }
+  yrTimer=requestAnimationFrame(step);
+}
+</script>
+</body>
+</html>

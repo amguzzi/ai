@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redacted — Exploration: Broadsheet (clean newspaper)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   EXPLORATION — BROADSHEET
+   A clean newspaper page: masthead, double rule, dateline,
+   hairlines. Black on white, one press-red for the miss mark.
+   ============================================================ */
+:root{
+  --paper:#fdfdfb; --ink:#141414; --muted:#565656; --hair:#d4d2cc;
+  --redact:#000; --correct:#1e5c34; --miss:#a01a1a;
+  --mast:'Playfair Display', Georgia, serif;
+  --serif:'PT Serif', Georgia, serif;
+  --t-xs:.72rem; --t-sm:.85rem; --t-md:1.05rem; --t-lg:1.35rem; --t-xl:1.6rem; --t-2xl:3rem;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+button,input{font-family:inherit; touch-action:manipulation;}
+body{font-family:var(--serif); color:var(--ink); background:var(--paper); line-height:1.55;
+  -webkit-font-smoothing:antialiased;}
+.sheet{max-width:640px; margin:0 auto; padding:2.5rem 1.5rem 4rem;}
+
+/* masthead */
+.masthead{text-align:center; border-bottom:4px double var(--ink); padding-bottom:1rem;}
+.masthead h1{font-family:var(--mast); font-weight:700; font-size:var(--t-2xl); letter-spacing:.02em; line-height:1;}
+.masthead h1 .bar{background:var(--redact); color:transparent; padding:0 .06em;}
+.dateline{display:flex; justify-content:space-between; font-size:var(--t-xs); letter-spacing:.14em;
+  text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--ink); padding:.5rem 0; margin-bottom:1.6rem;}
+.deck{text-align:center; font-style:italic; font-size:var(--t-md); color:var(--muted); max-width:44ch; margin:1rem auto 0;}
+.begin{display:block; margin:1.4rem auto 0; font-family:var(--serif); font-weight:700; font-size:var(--t-sm);
+  letter-spacing:.08em; text-transform:uppercase; background:var(--ink); color:#fff; border:none;
+  padding:.7em 2.2em; cursor:pointer;}
+.begin:hover{opacity:.88;}
+
+/* article */
+.kicker{font-size:var(--t-xs); font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--muted);
+  border-top:1px solid var(--ink); padding-top:.5rem; display:flex; justify-content:space-between;}
+blockquote{font-size:var(--t-lg); line-height:1.6; margin:1.2rem 0 0;}
+blockquote::before{content:"“"; font-family:var(--mast); font-size:1.6em; line-height:0; vertical-align:-.32em; margin-right:.08em;}
+.term{position:relative; display:inline; white-space:nowrap;}
+.term .bar{position:absolute; inset:-1px -2px; background:var(--redact);}
+.play.revealed .term .bar{animation:dissolve 1s cubic-bezier(.4,0,.2,1) forwards;}
+@keyframes dissolve{to{opacity:0; filter:blur(3px); transform:scale(1.05);}}
+.play.revealed .subject .word{border-bottom:2px solid var(--correct); font-weight:700;}
+@media (prefers-reduced-motion:reduce){.play.revealed .term .bar{animation:none; opacity:0;}}
+
+.question{font-family:var(--mast); font-weight:500; font-size:var(--t-xl); text-align:center; margin:1.8rem 0 .8rem;}
+
+/* guess row — the verified pattern */
+.row{display:flex; align-items:center; gap:1rem;}
+.gline{flex:1; min-width:0; display:flex; align-items:center; gap:.45rem; height:2.5rem; border-bottom:2px solid var(--ink);}
+.gline input{flex:1; min-width:0; height:100%; font-size:var(--t-lg); font-style:italic; color:var(--ink);
+  background:transparent; border:none; outline:none; padding:0 .05em;}
+.gline input::placeholder{color:var(--muted); opacity:.6;}
+.gmark{flex:none; width:1.5rem; height:1.5rem; border-radius:100px; display:grid; place-items:center;
+  border:2px solid; font-size:.9rem; line-height:1; font-style:normal; visibility:hidden;}
+.gmark.miss{color:var(--miss); border-color:var(--miss);}
+.reveal-btn{font-weight:700; font-size:var(--t-sm); letter-spacing:.08em; text-transform:uppercase;
+  background:var(--ink); color:#fff; border:none; padding:.7em 1.4em; cursor:pointer; white-space:nowrap;}
+.play.revealed .gmark{visibility:visible;}
+.play.revealed .reveal-btn{visibility:hidden;}
+.play.revealed .gline input{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--miss); text-decoration-thickness:2px; pointer-events:none;}
+
+/* reveal — set like a correction notice */
+.panel{max-height:0; opacity:0; overflow:hidden; transition:max-height .5s ease .75s, opacity .5s ease .75s;}
+.play.revealed .panel{max-height:320px; opacity:1;}
+.answer{font-size:var(--t-lg); margin-top:1rem;}
+.answer b{border-bottom:2px solid var(--correct);}
+.answer .src{font-style:italic; color:var(--muted); font-size:var(--t-md);}
+.note{font-size:var(--t-md); color:var(--muted); border-left:3px solid var(--ink); padding-left:.9rem; margin-top:.9rem;}
+.again{background:none; border:none; color:var(--muted); font-size:var(--t-sm); font-style:italic;
+  cursor:pointer; margin-top:.7rem; text-decoration:underline;}
+
+/* result — a classified-ad box */
+.result{border:2px solid var(--ink); padding:1.4rem; margin-top:2.2rem; text-align:center;}
+.result .cap{font-size:var(--t-xs); font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--miss);}
+.result .line{font-family:var(--mast); font-weight:500; font-size:var(--t-xl); line-height:1.25; margin:.6rem auto; max-width:30ch;}
+.result .line .t{border-bottom:2px solid var(--correct);}
+.result .line .g{font-style:italic; color:var(--miss);}
+.result .score{font-size:var(--t-sm); letter-spacing:.1em; text-transform:uppercase; color:var(--muted);}
+.dots{display:flex; justify-content:center; gap:.4rem; margin-top:.8rem;}
+.dots span{width:1.35rem; height:1.35rem; border:1px solid var(--hair); display:grid; place-items:center;
+  font-size:.72rem; color:var(--muted);}
+.dots .h{color:var(--correct); border-color:var(--correct);}
+.dots .n{color:var(--miss); border-color:var(--miss);}
+@media (max-width:520px){
+  :root{--t-2xl:2.2rem; --t-xl:1.35rem; --t-lg:1.18rem;}
+  .sheet{padding:1.5rem 1rem 3rem;}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <!-- masthead / cover -->
+  <header class="masthead">
+    <h1>The RE<span class="bar" aria-hidden="true">DACT</span>ED</h1>
+    <p class="deck">Innovation has always been disruptive, whether it's the wheel or artificial
+      intelligence. Read a real reaction, and guess the innovation that sparked it.</p>
+    <button class="begin">Begin</button>
+  </header>
+  <div class="dateline"><span>Est. every century</span><span>Eight passages</span><span>Price: one guess</span></div>
+
+  <!-- the passage -->
+  <article class="play" id="play">
+    <p class="kicker"><span>From our correspondent</span><span>Passage III of VIII</span></p>
+
+    <blockquote>
+      They promise this <span class="term subject"><span class="word">the printed almanac</span><span class="bar" role="img" aria-label="the innovation, redacted"></span></span>
+      will unburden the mind of memory itself — already the young scarce trouble to learn
+      what they may so easily look up. I have argued the point with
+      <span class="term"><span class="word">the Dean of Wells</span><span class="bar" role="img" aria-label="a name, redacted"></span></span>,
+      and set it down this <span class="term"><span class="word">Michaelmas</span><span class="bar" role="img" aria-label="a date, redacted"></span></span> past,
+      that a later age might judge which of us the fool.”
+    </blockquote>
+
+    <p class="question" id="ask">What's the innovation?</p>
+    <form onsubmit="reveal(); return false;">
+      <div class="row">
+        <div class="gline">
+          <input type="text" value="artificial intelligence" autocomplete="off" aria-labelledby="ask">
+          <span class="gmark miss" role="img" aria-label="incorrect">✗</span>
+        </div>
+        <button class="reveal-btn" type="submit">Reveal</button>
+      </div>
+    </form>
+
+    <div class="panel" aria-live="polite">
+      <p class="answer">It was <b>the printed almanac</b> — <span class="src">A. Verger, 1698.</span></p>
+      <p class="note">Correction: three hundred years before we feared machines would think for us,
+        a clergyman was certain that cheap print would rot the memory of the young.</p>
+      <button class="again" onclick="again()">↺ redact again</button>
+    </div>
+  </article>
+
+  <!-- result -->
+  <section class="result">
+    <p class="cap">My biggest miss</p>
+    <p class="line">I was certain <span class="t">the printed almanac</span> — 1698 — was <span class="g">artificial intelligence</span>.</p>
+    <p class="score">Named 4 of 8 · reasonably suspicious</p>
+    <div class="dots" aria-label="Results: 4 correct of 8">
+      <span class="n">✗</span><span class="h">✓</span><span class="n">✗</span><span class="h">✓</span>
+      <span class="n">✗</span><span class="h">✓</span><span class="n">✗</span><span class="h">✓</span>
+    </div>
+  </section>
+
+</div>
+<script>
+function reveal(){document.getElementById('play').classList.add('revealed');}
+function again(){document.getElementById('play').classList.remove('revealed');}
+</script>
+</body>
+</html>
