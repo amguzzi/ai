@@ -36,6 +36,24 @@ at the bottom to walk the screens.
 | `direction-editorial.html` | Alternate — crisp daily puzzle |
 | `direction-dossier-refined.html` | Alternate — declassified report |
 
+## The game (playable build)
+
+**`game.html`** is the real game, kept as simple as possible: one HTML file in
+the **Folio** look (the chosen direction) plus **`quotes.js`**, which holds the
+eight quotes. Everything in `quotes.js` is a **fictional placeholder** — the
+file's header documents the tiny schema (`{{!subject}}` / `{{detail}}`
+redaction markup, `answer`, `accept` aliases, `author`, `year`, `note`); swap
+in real sourced quotes and the game picks them up, no code changes.
+
+What it does: title → eight passages one-by-one, guess → **in-place dissolve
+reveal** (quote stays put, verdict ✓/✗ lands in the guess box, era shown only
+on reveal) → the Reckoning, which **leads with your biggest miss** (guessed
+"AI" on any wrong answer → the oldest such innovation; otherwise the oldest
+wrong one, with your guess), then the grade and ✓/✗ row, with copy-to-share.
+Enter reveals; Enter again advances. Answer matching is loose (case, articles
+and punctuation ignored; `accept` aliases). No accounts, no backend, no
+persistence.
+
 ## Round 4 — simple & clean explorations
 
 Three stripped-back looks (book / newspaper / literary journal) plus an
