@@ -104,13 +104,11 @@ blockquote{font-size:var(--t-xl); line-height:1.6; margin-top:1.8rem;}
 
 <!-- ============ TITLE ============ -->
 <section class="page screen active" id="scr-title">
-  <p class="head" id="deckhead">A Diversion</p>
   <h1>RE<span class="tbar" aria-hidden="true">DACT</span>ED</h1>
   <p class="asterism" aria-hidden="true">⁂</p>
   <p class="standfirst">Innovation has always been disruptive, whether it's the wheel or artificial
     intelligence. Read a real reaction, and guess the innovation that sparked it.</p>
   <div class="center"><button class="btn" onclick="begin()">Begin</button></div>
-  <p class="small" id="deckfoot"></p>
 </section>
 
 <!-- ============ PLAY ============ -->
@@ -158,7 +156,6 @@ blockquote{font-size:var(--t-xl); line-height:1.6; margin-top:1.8rem;}
 var i = 0, results = [], guesses = [];
 var $ = function(id){ return document.getElementById(id); };
 var ROMAN = ['i','ii','iii','iv','v','vi','vii','viii','ix','x','xi','xii'];
-var WORDS = ['one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'];
 
 /* ---------- guess tracking (Supabase; table is insert-only for this key) ---------- */
 var TRACK = {
@@ -191,14 +188,6 @@ function show(id){
 /* ---------- helpers ---------- */
 function esc(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function yearFor(q){ return q.yearLabel || (q.year < 0 ? (-q.year)+' BC' : String(q.year)); }
-function cap(w){ return w.charAt(0).toUpperCase()+w.slice(1); }
-
-/* title copy follows the deck size */
-(function(){
-  var w = WORDS[QUOTES.length-1] || String(QUOTES.length);
-  $('deckhead').textContent = 'A Diversion in '+cap(w)+' Passages';
-  $('deckfoot').textContent = w+' passages · a few minutes';
-})();
 
 /* {{!subject}} and {{detail}} become covered terms; era is never shown pre-reveal */
 function quoteHTML(text){
@@ -237,7 +226,7 @@ function loadPassage(){
   $('folio').textContent = '· '+ROMAN[i]+' of '+ROMAN[QUOTES.length-1]+' ·';
   $('quote').innerHTML = quoteHTML(q.text);
   $('g').value = ''; $('g').readOnly = false;
-  $('g').focus({preventScroll:true});
+  /* no autofocus: focusing here pops the keyboard on phones — the player taps in */
 }
 
 $('form').addEventListener('submit', function(e){
