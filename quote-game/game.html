@@ -104,13 +104,13 @@ blockquote{font-size:var(--t-xl); line-height:1.6; margin-top:1.8rem;}
 
 <!-- ============ TITLE ============ -->
 <section class="page screen active" id="scr-title">
-  <p class="head">A Diversion in Eight Passages</p>
+  <p class="head" id="deckhead">A Diversion</p>
   <h1>RE<span class="tbar" aria-hidden="true">DACT</span>ED</h1>
   <p class="asterism" aria-hidden="true">⁂</p>
   <p class="standfirst">Innovation has always been disruptive, whether it's the wheel or artificial
     intelligence. Read a real reaction, and guess the innovation that sparked it.</p>
   <div class="center"><button class="btn" onclick="begin()">Begin</button></div>
-  <p class="small">Eight passages · about four minutes</p>
+  <p class="small" id="deckfoot"></p>
 </section>
 
 <!-- ============ PLAY ============ -->
@@ -158,6 +158,30 @@ blockquote{font-size:var(--t-xl); line-height:1.6; margin-top:1.8rem;}
 var i = 0, results = [], guesses = [];
 var $ = function(id){ return document.getElementById(id); };
 var ROMAN = ['i','ii','iii','iv','v','vi','vii','viii','ix','x','xi','xii'];
+var WORDS = ['one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'];
+
+/* ---------- guess tracking (Supabase; table is insert-only for this key) ---------- */
+var TRACK = {
+  url: 'https://dvwaqwskqhmocejjfpxo.supabase.co',
+  key: 'sb_publishable_8VG2e0-Mmk84ZsUzVXK_kg_ASen3gtu' /* publishable key — safe to ship */
+};
+var session = newSession();
+function newSession(){
+  try{ return crypto.randomUUID(); }
+  catch(e){ return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
+    var r = Math.random()*16|0; return (c==='x' ? r : (r&3|8)).toString(16); }); }
+}
+function track(quoteId, guess, correct){
+  if(!TRACK.url || !TRACK.key) return;           /* blank these out to disable tracking */
+  try{
+    fetch(TRACK.url + '/rest/v1/redacted_guesses', {
+      method: 'POST', keepalive: true,
+      headers: { 'Content-Type':'application/json', 'apikey':TRACK.key, 'Authorization':'Bearer '+TRACK.key },
+      body: JSON.stringify({ session_id: session, quote_id: quoteId,
+                             guess: String(guess).slice(0,200), correct: !!correct })
+    }).catch(function(){});                       /* tracking must never break the game */
+  }catch(e){}
+}
 
 function show(id){
   document.querySelectorAll('.screen').forEach(function(s){ s.classList.toggle('active', s.id===id); });
@@ -166,7 +190,15 @@ function show(id){
 
 /* ---------- helpers ---------- */
 function esc(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function yearStr(y){ return y < 0 ? (-y)+' BC' : String(y); }
+function yearFor(q){ return q.yearLabel || (q.year < 0 ? (-q.year)+' BC' : String(q.year)); }
+function cap(w){ return w.charAt(0).toUpperCase()+w.slice(1); }
+
+/* title copy follows the deck size */
+(function(){
+  var w = WORDS[QUOTES.length-1] || String(QUOTES.length);
+  $('deckhead').textContent = 'A Diversion in '+cap(w)+' Passages';
+  $('deckfoot').textContent = w+' passages · a few minutes';
+})();
 
 /* {{!subject}} and {{detail}} become covered terms; era is never shown pre-reveal */
 function quoteHTML(text){
@@ -194,6 +226,7 @@ function isCorrect(guess, q){
 /* ---------- flow ---------- */
 function begin(){
   i = 0; results = []; guesses = [];
+  session = newSession();               /* one session id per playthrough */
   show('scr-play'); loadPassage();
 }
 
@@ -218,6 +251,7 @@ function reveal(){
   var guess = $('g').value;
   var ok = isCorrect(guess, q);
   results.push(ok); guesses.push(guess);
+  track(q.id, guess, ok);
 
   var mark = $('gmark');
   mark.textContent = ok ? '✓' : '✗';
@@ -225,8 +259,8 @@ function reveal(){
   mark.setAttribute('aria-label', ok ? 'correct' : 'incorrect');
 
   $('answer').innerHTML = ok
-    ? '<span class="ok-word">Just so.</span> — <span class="src">'+esc(q.author)+', <b>'+yearStr(q.year)+'</b>.</span>'
-    : 'It was <span class="truth">'+esc(q.answer)+'</span> — <span class="src">'+esc(q.author)+', <b>'+yearStr(q.year)+'</b>.</span>';
+    ? '<span class="ok-word">Just so.</span> — <span class="src">'+esc(q.author)+', <b>'+yearFor(q)+'</b>.</span>'
+    : 'It was <span class="truth">'+esc(q.answer)+'</span> — <span class="src">'+esc(q.author)+', <b>'+yearFor(q)+'</b>.</span>';
   $('note').textContent = q.note || '';
 
   $('g').readOnly = true;
@@ -255,10 +289,11 @@ function biggestMiss(){
                                     : (m.guess.trim() || 'a mystery to me') };
 }
 function rank(n){
-  if(n>=8) return 'unfoolable';
-  if(n>=6) return 'hard to fool';
-  if(n>=4) return 'reasonably suspicious';
-  if(n>=2) return 'credulous, but charming';
+  var f = n / QUOTES.length;
+  if(f >= 1)   return 'unfoolable';
+  if(f >= .7)  return 'hard to fool';
+  if(f >= .5)  return 'reasonably suspicious';
+  if(f >= .25) return 'credulous, but charming';
   return 'gloriously fooled';
 }
 
@@ -269,11 +304,11 @@ function reckoning(){
     $('endcap').textContent = 'My finest misjudgement';
     $('endcap').className = 'cap missy';
     $('endline').innerHTML = 'I was certain <span class="t">'+esc(miss.q.answer)+'</span> — '
-      + yearStr(miss.q.year)+' — was <span class="g">'+esc(miss.guess)+'</span>.';
+      + yearFor(miss.q)+' — was <span class="g">'+esc(miss.guess)+'</span>.';
   }else{
     $('endcap').textContent = 'Flawless';
     $('endcap').className = 'cap flawless';
-    $('endline').textContent = 'Nothing got past me. Eight of eight.';
+    $('endline').textContent = 'Nothing got past me — '+QUOTES.length+' of '+QUOTES.length+'.';
   }
   $('endscore').textContent = 'I named '+n+' of '+QUOTES.length+' — '+rank(n)+'.';
   $('dots').innerHTML = results.map(function(r){
@@ -289,7 +324,7 @@ function shareText(){
   var miss = biggestMiss();
   var lines = ['REDACTED — I named '+n+' of '+QUOTES.length+'.'];
   if(miss) lines.push('My finest misjudgement: I was certain '+miss.q.answer
-    +' ('+yearStr(miss.q.year)+') was '+miss.guess+'.');
+    +' ('+yearFor(miss.q)+') was '+miss.guess+'.');
   else lines.push('Nothing got past me.');
   lines.push(results.map(function(r){ return r?'✓':'✗'; }).join(''));
   return lines.join('\n');

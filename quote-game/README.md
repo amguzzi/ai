@@ -40,10 +40,24 @@ at the bottom to walk the screens.
 
 **`game.html`** is the real game, kept as simple as possible: one HTML file in
 the **Folio** look (the chosen direction) plus **`quotes.js`**, which holds the
-eight quotes. Everything in `quotes.js` is a **fictional placeholder** — the
-file's header documents the tiny schema (`{{!subject}}` / `{{detail}}`
-redaction markup, `answer`, `accept` aliases, `author`, `year`, `note`); swap
-in real sourced quotes and the game picks them up, no code changes.
+quotes. The deck is now the **five verified quotes** from the sourced CSV
+(Plato, Baillet, Baudelaire, Licklider, E. B. White); the unverified almanac
+entry was excluded per its own attribution flag. Each entry keeps its `source`
+and `confidence` fields for provenance; the header documents the schema
+(`{{!subject}}` / `{{detail}}` redaction markup, `answer`, `accept` aliases,
+`author`, `year` + optional `yearLabel` like "c. 370 BC", `note`). Add or swap
+quotes and the game adapts — the title copy, ranks and share text all follow
+the deck size.
+
+**Guess tracking:** every reveal fires an insert into the
+`redacted_guesses` table in the owner's Supabase project
+(`session_id` groups a playthrough; `quote_id`, `guess`, `correct`,
+`created_at`). The embedded key is the publishable anon key and the table is
+**insert-only under RLS** — players can record a guess but never read, update
+or delete rows (verified both directions). Tracking is fire-and-forget and can
+never break the game; blank out `TRACK.url`/`TRACK.key` in `game.html` to
+disable it. Read results in the Supabase dashboard, e.g.:
+`select quote_id, guess, correct, count(*) from redacted_guesses group by 1,2,3 order by 1, count(*) desc;`
 
 What it does: title → eight passages one-by-one, guess → **in-place dissolve
 reveal** (quote stays put, verdict ✓/✗ lands in the guess box, era shown only
